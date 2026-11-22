@@ -48,6 +48,28 @@ button{cursor:pointer}
 .result h3{margin-top:18px}
 .empty,.deadlock{text-align:center;padding:35px;color:var(--muted)}
 footer{color:#667184;font-size:11px}
+ .item-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.item-icon{
+  width:52px;
+  height:52px;
+  object-fit:contain;
+  border-radius:6px;
+  flex-shrink:0;
+}
+
+.item-info{
+  min-width:0;
+  flex:1;
+}
+
+.item-info p{
+  margin-bottom:0;
+}
 @media(max-width:650px){.fieldgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h1{font-size:34px}}
 </style>
 </head>
@@ -437,14 +459,19 @@ if(role==="4"||role==="5"){
   <p><b>Противники:</b> ${escapeHTML(knownEnemies)}</p>
   <h3>РЕКОМЕНДАЦИИ</h3>
   ${recommendations.length?recommendations.map((item,i)=>`
-   <div class="result-card">
-    <b>${i+1}. ${item.name}</b>
-    <small>${item.group}</small>
-    <p>${escapeHTML(item.reason)}</p>
+   <div class="result-card item-card">
+    <img
+      class="item-icon"
+      src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/${item.key}.png"
+      alt="${item.name}"
+      onerror="this.style.display='none'"
+    >
+    <div class="item-info">
+      <b>${i+1}. ${item.name}</b>
+      <small>${item.group}</small>
+      <p>${escapeHTML(item.reason)}</p>
+    </div>
    </div>`).join(""):"<p>По введённому драфту пока не найдено уверенных ситуационных рекомендаций. Проверь написание имён героев или добавь больше противников.</p>"}
-  <p class="notice">BUILDWISE prototype · Это логика по правилам, а не статистическая мета-сборка. Она не анализирует Match ID и пока не знает тайминги, экономику, способности в конкретной игре и актуальные цены/изменения патча.</p>
- `;
-});
 
 function escapeHTML(s){
  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
