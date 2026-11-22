@@ -3,482 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b10">
 <title>BUILDWISE — Dota 2 & Deadlock</title>
 <style>
-:root{--bg:#090b10;--panel:#11151e;--line:#283142;--text:#edf1f8;--muted:#929db0;--accent:#c6a36b}
+:root{--bg:#090b10;--panel:#11151e;--panel2:#171e2b;--line:#283142;--text:#edf1f8;--muted:#929db0;--accent:#c6a36b;--green:#91c79c;--red:#d98d8d}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Arial,sans-serif}
-header,main,footer{max-width:1180px;margin:auto;padding:24px}
-.logo{font-size:25px;font-weight:900;letter-spacing:4px}
-.logo span{color:var(--accent)}
-.tag{color:var(--muted);font-size:12px;letter-spacing:2px}
-.hero{padding:25px 0}
-.hero h1{font-size:46px;line-height:1.1;margin:10px 0}
-.hero p{color:var(--muted)}
+body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1a2332 0,transparent 55%),var(--bg);color:var(--text);font:15px/1.5 Arial,sans-serif}
+header,main,footer{max-width:1240px;margin:auto;padding:22px}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:25px;font-weight:900;letter-spacing:4px}.logo span{color:var(--accent)}
+.tag{color:var(--muted);font-size:11px;letter-spacing:2px}
+.hero{padding:32px 0 20px}.hero h1{font-size:clamp(34px,6vw,56px);line-height:1.03;margin:12px 0}.hero p{color:var(--muted);max-width:650px}
 .tabs{display:flex;gap:10px;margin:20px 0}
+button,select,input{font:inherit}
 button{cursor:pointer}
-.tab,.filter{background:#11151e;color:var(--muted);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-weight:bold}
-.tab.active{background:var(--accent);color:#111}
-.section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
-.section-head{display:flex;justify-content:space-between;margin-bottom:16px}
-.count,.notice{color:var(--muted);font-size:12px}
-.search{width:100%;padding:13px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white}
+.tab,.filter,.secondary{background:#11151e;color:var(--muted);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-weight:bold}
+.tab.active{background:var(--accent);color:#111;border-color:var(--accent)}
+.section{background:rgba(17,21,30,.94);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+.section-head h2{margin:0;font-size:19px}.count,.notice{color:var(--muted);font-size:12px}
+.search{width:100%;padding:13px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white;outline:none}
+.search:focus,.field input:focus,.field select:focus{border-color:var(--accent)}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-.filter{padding:7px 12px;font-size:12px}
-.filter.active{border-color:var(--accent);color:white}
+.filter{padding:7px 12px;font-size:12px}.filter.active{border-color:var(--accent);color:var(--accent);background:#211e19}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:11px}
-.hero-card{background:#1b2230;border:1px solid var(--line);border-radius:9px;color:white;text-align:left;padding:0;overflow:hidden}
-.hero-card:hover,.hero-card.selected{border:2px solid var(--accent)}
-.portrait{height:105px;background:#252e40;display:flex;align-items:center;justify-content:center}
+.hero-card{background:#1b2230;border:1px solid var(--line);border-radius:9px;color:white;text-align:left;padding:0;overflow:hidden;transition:.15s}
+.hero-card:hover,.hero-card.selected{border:1px solid var(--accent);transform:translateY(-2px)}
+.portrait{height:105px;background:#252e40;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .portrait img{width:100%;height:100%;object-fit:cover}
-.fallback{display:none;font-size:28px;color:var(--accent)}
-.hero-name{padding:9px 10px 2px;font-weight:bold}
-.hero-attr{padding:0 10px 10px;color:var(--muted);font-size:10px;text-transform:uppercase}
+.fallback{font-size:28px;color:var(--accent)}
+.hero-name{padding:9px 10px 2px;font-weight:bold}.hero-attr{padding:0 10px 10px;color:var(--muted);font-size:10px;text-transform:uppercase}
+.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .field label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
 .field input,.field select{width:100%;padding:12px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white}
-.fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .field.full{grid-column:1/-1}
 .selected-box{display:flex;align-items:center;gap:12px;background:#090c12;border:1px solid var(--line);padding:12px;border-radius:9px;min-height:65px}
-.selected-box img{width:74px;height:48px;object-fit:cover}
+.selected-box img{width:74px;height:48px;object-fit:cover;border-radius:5px}
 .primary{background:var(--accent);border:0;color:#111;font-weight:bold;padding:13px 18px;border-radius:8px;margin-top:15px}
+.secondary{padding:9px 12px}
 .result{display:none;margin-top:16px;background:#090c12;border:1px solid var(--line);border-radius:9px;padding:16px}
 .result p{color:var(--muted)}
 .result-card{padding:12px;margin:9px 0;background:#171d29;border-radius:8px;border:1px solid #283142}
-.result-card small{display:block;color:var(--muted);margin-top:5px}
-.result h3{margin-top:18px}
-.empty,.deadlock{text-align:center;padding:35px;color:var(--muted)}
-footer{color:#667184;font-size:11px}
- .item-card{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.item-icon{
-  width:52px;
-  height:52px;
-  object-fit:contain;
-  border-radius:6px;
-  flex-shrink:0;
-}
-
-.item-info{
-  min-width:0;
-  flex:1;
-}
-
-.item-info p{
-  margin-bottom:0;
-}
-@media(max-width:650px){.fieldgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h1{font-size:34px}}
+.result-card h4{margin:0 0 5px}.result-card small{display:block;color:var(--muted);margin-top:5px}
+.item-card{display:flex;align-items:center;gap:13px}
+.item-icon{width:54px;height:54px;object-fit:contain;border-radius:6px;flex-shrink:0;background:#0b1018}
+.item-info{min-width:0;flex:1}.item-info p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.item-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px}
+.item-step{display:flex;align-items:center;gap:10px;background:#171d29;border:1px solid var(--line);padding:10px;border-radius:8px}
+.step-num{width:25px;height:25px;display:grid;place-items:center;background:#2a2d35;color:var(--accent);border-radius:50%;font-weight:bold;font-size:12px;flex-shrink:0}
+.item-step img{width:42px;height:42px;object-fit:contain}.item-step strong{font-size:13px}.item-step small{display:block;color:var(--muted);font-size:11px}
+.empty{text-align:center;padding:30px;color:var(--muted)}
+.status{font-size:12px;color:var(--muted);margin-top:10px}.status.error{color:var(--red)}.status.ok{color:var(--green)}
+.badge{display:inline-block;padding:3px 7px;border:1px solid var(--line);border-radius:20px;color:var(--muted);font-size:10px;margin-left:5px}
+footer{color:#667184;font-size:11px;padding-bottom:35px}
+.hidden{display:none!important}
+@media(max-width:650px){header,main,footer{padding:16px}.fieldgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero{padding-top:20px}.section{padding:15px}.tabs{display:grid;grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">BUILD<span>WISE</span></div>
-<div class="tag">SMART PICKS. BETTER BUILDS.</div>
+  <div><div class="logo">BUILD<span>WISE</span></div><div class="tag">SMART PICKS. BETTER BUILDS.</div></div>
+  <div class="tag">DOTA 2&nbsp; / &nbsp;DEADLOCK</div>
 </header>
 <main>
 <section class="hero">
-<div class="tag">YOUR DRAFT COMPANION</div>
-<h1>Build smarter.<br>Play sharper.</h1>
-<p>Подбирай героев, собирай команду и готовься к матчу.</p>
+  <div class="tag">YOUR DRAFT COMPANION</div>
+  <h1>Build smarter.<br>Play sharper.</h1>
+  <p>Выбирай героя, изучай предметы и собирай собственный план на матч. Два игровых мира — в одном месте.</p>
 </section>
-
-<div class="tabs">
-<button class="tab active" id="dotaTab">DOTA 2</button>
-<button class="tab" id="deadlockTab">DEADLOCK</button>
+<div class="tabs" role="tablist">
+  <button class="tab active" id="dotaTab" role="tab" aria-selected="true">DOTA 2</button>
+  <button class="tab" id="deadlockTab" role="tab" aria-selected="false">DEADLOCK</button>
 </div>
 
-<div id="dotaApp">
-<section class="section">
-<div class="section-head">
-<h2>HERO DATABASE</h2>
-<span class="count" id="heroCount"></span>
-</div>
-<input class="search" id="heroSearch" placeholder="Найти героя...">
-<div class="filters">
-<button class="filter active" data-filter="all">ВСЕ</button>
-<button class="filter" data-filter="str">СИЛА</button>
-<button class="filter" data-filter="agi">ЛОВКОСТЬ</button>
-<button class="filter" data-filter="int">ИНТЕЛЛЕКТ</button>
-<button class="filter" data-filter="uni">УНИВЕРСАЛЬНЫЕ</button>
-</div>
-<div class="grid" id="heroGrid"></div>
-<div class="notice">Каталог героев загружается из встроенного списка.</div>
+<section class="section" id="gamePanel">
+  <div class="section-head"><h2 id="gameTitle">Герои Dota 2</h2><span class="count" id="heroCount">Загрузка…</span></div>
+  <input class="search" id="heroSearch" type="search" placeholder="Поиск героя…" autocomplete="off">
+  <div class="filters" id="heroFilters"></div>
+  <div class="grid" id="heroGrid"><div class="empty">Загружаем героев…</div></div>
+  <div class="status" id="dataStatus" aria-live="polite">Подключаемся к источнику данных…</div>
 </section>
 
 <section class="section">
-<h2>YOUR DRAFT</h2>
-<div class="field full">
-<label>YOUR HERO</label>
-<div class="selected-box" id="selectedHero">Выбери героя в каталоге выше</div>
-</div>
-<div class="fieldgrid">
-<div class="field full">
-<label>YOUR ROLE / POSITION</label>
-<select id="heroRole">
-<option value="1">CARRY — POSITION 1</option>
-<option value="2">MID — POSITION 2</option>
-<option value="3">OFFLANE — POSITION 3</option>
-<option value="4">SOFT SUPPORT — POSITION 4</option>
-<option value="5" selected>HARD SUPPORT — POSITION 5</option>
-</select>
-</div>
-<div class="field">
-<label>YOUR TEAMMATES</label>
-<input id="allies" placeholder="Например: Pudge, Lion">
-</div>
-<div class="field">
-<label>ENEMY TEAM</label>
-<input id="enemies" placeholder="Например: PA, Axe">
-</div>
-<div class="field full">
-<label>MATCH ID (OPTIONAL — ПОКА НЕ АНАЛИЗИРУЕТСЯ)</label>
-<input id="matchId" placeholder="Вставь Match ID">
-</div>
-</div>
-<button class="primary" id="buildBtn">GENERATE MY BUILD</button>
-<div class="result" id="buildResult"></div>
+  <div class="section-head"><h2>Сборка героя</h2><span class="count">BUILD PLANNER</span></div>
+  <div class="selected-box" id="selectedBox"><span class="notice">Сначала выбери героя выше.</span></div>
+  <div class="fieldgrid">
+    <div class="field"><label for="roleSelect">Роль / стиль игры</label><select id="roleSelect"><option value="Любая">Любая роль</option><option>Керри</option><option>Мид</option><option>Оффлейн</option><option>Саппорт</option><option>Полусаппорт</option><option>Дуэлист</option><option>Стрелок</option><option>Заклинатель</option><option>Инициатор</option></select></div>
+    <div class="field"><label for="buildName">Название сборки</label><input id="buildName" maxlength="50" placeholder="Например: Универсальная"></div>
+    <div class="field full"><label for="buildNotes">Заметки к сборке</label><input id="buildNotes" maxlength="180" placeholder="Когда и против кого использовать…"></div>
+  </div>
+  <button class="primary" id="showBuild" type="button">Открыть пример сборки</button>
+  <button class="secondary" id="resetBuild" type="button">Сбросить выбор</button>
+  <div class="result" id="buildResult" aria-live="polite"></div>
 </section>
-</div>
 
-<div id="deadlockApp" style="display:none">
-<section class="section deadlock">
-<h2>DEADLOCK DATABASE</h2>
-Каталог героев Deadlock добавим следующим этапом.
+<section class="section">
+  <div class="section-head"><h2>Предметы</h2><span class="count" id="itemCount">Выбери героя</span></div>
+  <input class="search" id="itemSearch" type="search" placeholder="Поиск предмета…" autocomplete="off" disabled>
+  <div class="filters" id="itemFilters"></div>
+  <div class="item-list" id="itemGrid"><div class="empty">После выбора героя здесь появятся предметы.</div></div>
 </section>
-</div>
 </main>
-<footer>BUILDWISE · FAN-MADE PROJECT</footer>
+<footer>BUILDWISE · Неофициальный фанатский справочник. Dota 2 и Deadlock принадлежат Valve. Данные загружаются из открытых источников; доступность зависит от API и интернет-соединения.</footer>
 
 <script>
-const heroes=[
-["Abaddon","uni","abaddon"],["Alchemist","str","alchemist"],
-["Ancient Apparition","int","ancient_apparition"],["Anti-Mage","agi","antimage"],
-["Arc Warden","agi","arc_warden"],["Axe","str","axe"],
-["Bane","uni","bane"],["Batrider","uni","batrider"],
-["Beastmaster","uni","beastmaster"],["Bloodseeker","agi","bloodseeker"],
-["Bounty Hunter","agi","bounty_hunter"],["Brewmaster","uni","brewmaster"],
-["Bristleback","str","bristleback"],["Broodmother","uni","broodmother"],
-["Centaur Warrunner","str","centaur"],["Chaos Knight","str","chaos_knight"],
-["Chen","uni","chen"],["Clinkz","agi","clinkz"],["Clockwerk","str","rattletrap"],
-["Crystal Maiden","int","crystal_maiden"],["Dark Seer","uni","dark_seer"],
-["Dark Willow","uni","dark_willow"],["Dawnbreaker","str","dawnbreaker"],
-["Dazzle","uni","dazzle"],["Death Prophet","uni","death_prophet"],
-["Disruptor","int","disruptor"],["Doom","str","doom_bringer"],
-["Dragon Knight","str","dragon_knight"],["Drow Ranger","agi","drow_ranger"],
-["Earth Spirit","str","earth_spirit"],["Earthshaker","str","earthshaker"],
-["Elder Titan","str","elder_titan"],["Ember Spirit","agi","ember_spirit"],
-["Enchantress","uni","enchantress"],["Enigma","uni","enigma"],
-["Faceless Void","agi","faceless_void"],["Grimstroke","int","grimstroke"],
-["Gyrocopter","agi","gyrocopter"],["Hoodwink","agi","hoodwink"],
-["Huskar","str","huskar"],["Invoker","uni","invoker"],
-["Io","uni","wisp"],["Jakiro","int","jakiro"],
-["Juggernaut","agi","juggernaut"],["Keeper of the Light","int","keeper_of_the_light"],
-["Kez","agi","kez"],["Kunkka","str","kunkka"],
-["Largo","uni","largo"],
-["Legion Commander","str","legion_commander"],["Leshrac","int","leshrac"],
-["Lich","int","lich"],["Lifestealer","str","life_stealer"],
-["Lina","int","lina"],["Lion","int","lion"],
-["Lone Druid","uni","lone_druid"],["Luna","agi","luna"],
-["Lycan","uni","lycan"],["Magnus","uni","magnataur"],
-["Marci","uni","marci"],["Mars","str","mars"],
-["Medusa","agi","medusa"],["Meepo","agi","meepo"],
-["Mirana","agi","mirana"],["Monkey King","agi","monkey_king"],
-["Morphling","agi","morphling"],["Muerta","int","muerta"],
-["Naga Siren","agi","naga_siren"],["Nature's Prophet","uni","furion"],
-["Necrophos","int","necrolyte"],["Night Stalker","str","night_stalker"],
-["Nyx Assassin","agi","nyx_assassin"],["Ogre Magi","str","ogre_magi"],
-["Omniknight","str","omniknight"],["Oracle","int","oracle"],
-["Outworld Destroyer","int","obsidian_destroyer"],["Pangolier","uni","pangolier"],
-["Phantom Assassin","agi","phantom_assassin"],["Phantom Lancer","agi","phantom_lancer"],
-["Phoenix","uni","phoenix"],["Primal Beast","str","primal_beast"],
-["Puck","uni","puck"],["Pudge","str","pudge"],
-["Pugna","int","pugna"],["Queen of Pain","int","queenofpain"],
-["Razor","agi","razor"],["Riki","agi","riki"],
-["Ringmaster","uni","ringmaster"],["Rubick","int","rubick"],
-["Sand King","uni","sand_king"],["Shadow Demon","uni","shadow_demon"],
-["Shadow Fiend","agi","nevermore"],["Shadow Shaman","int","shadow_shaman"],
-["Silencer","int","silencer"],["Skywrath Mage","int","skywrath_mage"],
-["Slardar","str","slardar"],["Slark","agi","slark"],
-["Snapfire","uni","snapfire"],["Sniper","agi","sniper"],
-["Spectre","agi","spectre"],["Spirit Breaker","str","spirit_breaker"],
-["Storm Spirit","int","storm_spirit"],["Sven","str","sven"],
-["Techies","uni","techies"],["Templar Assassin","agi","templar_assassin"],
-["Terrorblade","agi","terrorblade"],["Tidehunter","str","tidehunter"],
-["Timbersaw","uni","shredder"],["Tinker","int","tinker"],
-["Tiny","str","tiny"],["Treant Protector","str","treant"],
-["Troll Warlord","agi","troll_warlord"],["Tusk","str","tusk"],
-["Underlord","str","abyssal_underlord"],["Undying","str","undying"],
-["Ursa","agi","ursa"],
-["Vengeful Spirit","agi","vengefulspirit"],
-["Venomancer","uni","venomancer"],["Viper","agi","viper"],
-["Visage","uni","visage"],["Void Spirit","uni","void_spirit"],
-["Warlock","int","warlock"],["Weaver","agi","weaver"],
-["Windranger","uni","windrunner"],["Winter Wyvern","uni","winter_wyvern"],
-["Witch Doctor","int","witch_doctor"],["Wraith King","str","skeleton_king"],
-["Zeus","int","zuus"]
-].map(([name,attr,slug])=>({name,attr,slug}));
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const state = {game:"dota", heroes:[], items:[], selected:null, heroFilter:"Все", itemFilter:"Все", itemQuery:"", heroQuery:"", loading:false};
+const DOTA_CDN = "https://cdn.cloudflare.steamstatic.com";
+const DEADLOCK_API = "https://assets.deadlock-api.com";
+const DOTA_API = "https://api.opendota.com/api";
+const DOTA_HERO_IMG = name => `${DOTA_CDN}/apps/dota2/images/dota_react/heroes/${name}.png`;
+const DOTA_ITEM_IMG = name => `${DOTA_CDN}/apps/dota2/images/items/${name}_lg.png`;
+const DEADLOCK_IMG = path => path ? (path.startsWith("http") ? path : `${DEADLOCK_API}${path}`) : "";
 
-const grid=document.getElementById("heroGrid");
-const search=document.getElementById("heroSearch");
-const count=document.getElementById("heroCount");
-let filter="all",selected=null;
-const attrNames={str:"Сила",agi:"Ловкость",int:"Интеллект",uni:"Универсальный"};
+const sampleBuilds = {
+  dota: {
+    "Anti-Mage":[["Стартовые","Tango, Quelling Blade, Slippers of Agility"],["Ранняя игра","Power Treads, Battle Fury"],["Основные","Manta Style, Butterfly, Abyssal Blade"],["Ситуационные","Black King Bar, Eye of Skadi, Satanic"]],
+    "Axe":[["Стартовые","Tango, Stout Shield"],["Ранняя игра","Phase Boots, Blink Dagger"],["Основные","Blade Mail, Black King Bar, Heart of Tarrasque"],["Ситуационные","Overwhelming Blink, Shiva's Guard, Assault Cuirass"]],
+    "Crystal Maiden":[["Стартовые","Tango, Healing Salve, Observer Ward"],["Ранняя игра","Tranquil Boots, Magic Wand"],["Основные","Glimmer Cape, Force Staff, Aghanim's Shard"],["Ситуационные","Black King Bar, Aeon Disk, Aether Lens"]],
+    "Invoker":[["Стартовые","Tango, Circlet, Mantle of Intelligence"],["Ранняя игра","Hand of Midas, Boots of Speed"],["Основные","Witch Blade, Aghanim's Scepter, Scythe of Vyse"],["Ситуационные","Black King Bar, Refresher Orb, Linken's Sphere"]]
+  },
+  deadlock: {
+    "Abrams":[["Ранняя игра","Melee Lifesteal, Extra Health, Sprint Boots"],["Основные","Bullet Lifesteal, Improved Spirit Armor, Leech"],["Поздняя игра","Unstoppable, Colossus, Vampiric Burst"]],
+    "Bebop":[["Ранняя игра","Extra Spirit, Mystic Burst, Sprint Boots"],["Основные","Improved Burst, Spirit Lifesteal, Improved Reach"],["Поздняя игра","Boundless Spirit, Spiritual Overflow, Escalating Exposure"]],
+    "Haze":[["Ранняя игра","Extra Stamina, Basic Magazine, Sprint Boots"],["Основные","Swift Striker, Bullet Lifesteal, Ricochet"],["Поздняя игра","Unstoppable, Silencer, Inhibitor"]]
+  }
+};
 
+function setStatus(message, type="") { const el=$("dataStatus"); el.textContent=message; el.className="status "+type; }
+function escapeHTML(value="") { return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function normalize(s=""){return String(s).toLocaleLowerCase("ru").replace(/ё/g,"е");}
+function setGame(game){
+  state.game=game; state.selected=null; state.heroFilter="Все"; state.itemFilter="Все"; state.heroQuery=""; state.itemQuery="";
+  $("dotaTab").classList.toggle("active",game==="dota"); $("deadlockTab").classList.toggle("active",game==="deadlock");
+  $("dotaTab").setAttribute("aria-selected",String(game==="dota")); $("deadlockTab").setAttribute("aria-selected",String(game==="deadlock"));
+  $("gameTitle").textContent=game==="dota"?"Герои Dota 2":"Герои Deadlock";
+  $("heroSearch").value=""; $("itemSearch").value=""; $("itemSearch").disabled=true;
+  $("selectedBox").innerHTML='<span class="notice">Сначала выбери героя выше.</span>';
+  $("buildResult").style.display="none"; $("itemCount").textContent="Выбери героя";
+  $("itemGrid").innerHTML='<div class="empty">После выбора героя здесь появятся предметы.</div>';
+  loadGameData();
+}
+async function fetchJSON(url){
+  const response=await fetch(url,{headers:{"Accept":"application/json"}});
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+async function loadGameData(){
+  state.loading=true; state.heroes=[]; state.items=[]; $("heroGrid").innerHTML='<div class="empty">Загружаем список героев…</div>'; $("heroCount").textContent="Загрузка…"; setStatus("Загружаем данные…");
+  try{
+    if(state.game==="dota"){
+      const raw=await fetchJSON(`${DOTA_API}/heroes`);
+      state.heroes=raw.map(h=>({id:h.id,name:h.localized_name,slug:h.name.replace("npc_dota_hero_",""),attr:h.primary_attr||"unknown",roles:h.roles||[],image:DOTA_HERO_IMG(h.name.replace("npc_dota_hero_",""))}));
+      try{
+        const constants=await fetchJSON(`${DOTA_API}/constants/items`);
+        state.items=Object.entries(constants).filter(([k,v])=>v&&v.dname&&v.img).map(([key,v])=>({id:key,name:v.dname,desc:(v.qual||"Предмет")+" · "+(v.attrib||[]).map(a=>typeof a==="string"?a:a.footer||"").filter(Boolean).join(" "),image:`${DOTA_CDN}/apps/dota2/images/${v.img.replace(/^\/apps\/dota2\/images\//,"")}`,category:v.qual||"Предмет"}));
+      }catch(e){state.items=[];}
+      setStatus("Герои загружены из OpenDota. Сборки ниже — редактируемые примеры, не live-рекомендации.","ok");
+    }else{
+      const raw=await fetchJSON(`${DEADLOCK_API}/v2/heroes`);
+      state.heroes=raw.map(h=>({id:h.id,name:h.name||h.class_name||"Unknown",slug:h.class_name||String(h.id),attr:"Герой Deadlock",roles:[],image:DEADLOCK_IMG(h.images?.icon_hero_card||h.images?.icon_hero||h.images?.hero_card)})).filter(h=>h.name);
+      try{
+        const things=await fetchJSON(`${DEADLOCK_API}/v2/items`);
+        state.items=things.map(i=>({id:i.id,name:i.name||i.item_name||"Предмет",desc:i.description?.desc||i.description||i.type||"Предмет Deadlock",image:DEADLOCK_IMG(i.image||i.shop_image||i.images?.image),category:i.item_type||i.type||"Предмет"}));
+      }catch(e){state.items=[];}
+      setStatus("Герои Deadlock загружены из Deadlock API. Проверяй актуальность предметов в игре.","ok");
+    }
+  }catch(error){
+    state.heroes=offlineHeroes(state.game); state.items=[];
+    setStatus(`Не удалось получить данные из API (${error.message}). Показан встроенный резервный список. Проверь интернет или доступность API.`,"error");
+  }
+  state.loading=false; renderHeroes(); renderItems();
+}
+function offlineHeroes(game){
+  const dota=[["Anti-Mage","agi"],["Axe","str"],["Crystal Maiden","int"],["Invoker","int"],["Juggernaut","agi"],["Pudge","str"],["Sniper","agi"],["Shadow Fiend","agi"],["Lion","int"],["Phantom Assassin","agi"]];
+  const dead=[["Abrams",""],["Bebop",""],["Dynamo",""],["Haze",""],["Infernus",""],["Kelvin",""],["Lady Geist",""],["Lash",""],["McGinnis",""],["Seven",""]];
+  return (game==="dota"?dota:dead).map(([name,attr],i)=>({id:i+1,name,slug:name.toLowerCase().replace(/[^a-z0-9]+/g,"_"),attr,roles:[],image:""}));
+}
 function renderHeroes(){
- const q=search.value.trim().toLowerCase();
- const shown=heroes.filter(h=>
- (filter==="all"||h.attr===filter)&&
- (h.name.toLowerCase().includes(q)||attrNames[h.attr].toLowerCase().includes(q))
- );
- count.textContent=shown.length+" / "+heroes.length+" героев";
- if(!shown.length){
- grid.innerHTML='<div class="empty" style="grid-column:1/-1">Ничего не найдено.</div>';
- return;
- }
- grid.innerHTML=shown.map(h=>`
- <button class="hero-card ${selected?.slug===h.slug?"selected":""}" data-slug="${h.slug}">
- <div class="portrait">
- <img loading="lazy" src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.slug}.png" alt="${h.name}"
- onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
- <span class="fallback">${h.name[0]}</span>
- </div>
- <div class="hero-name">${h.name}</div>
- <div class="hero-attr">${attrNames[h.attr]}</div>
- </button>`).join("");
- grid.querySelectorAll(".hero-card").forEach(card=>{
- card.addEventListener("click",()=>{
- selectHero(heroes.find(h=>h.slug===card.dataset.slug));
- });
- });
+  const list=state.heroes.filter(h=>(state.heroFilter==="Все"|| (state.game==="dota"?h.attr===state.heroFilter:h.name===state.heroFilter))&&normalize(h.name).includes(normalize(state.heroQuery)));
+  $("heroCount").textContent=`${list.length} / ${state.heroes.length}`;
+  const filters=state.game==="dota"?["Все","str","agi","int","all"]:["Все"];
+  $("heroFilters").innerHTML=filters.map(f=>`<button class="filter ${state.heroFilter===f?"active":""}" data-filter="${escapeHTML(f)}">${({str:"Сила",agi:"Ловкость",int:"Интеллект",all:"Универсальный"}[f]||f)}</button>`).join("");
+  $("heroGrid").innerHTML=list.length?list.map(h=>`<button class="hero-card ${state.selected?.id===h.id?"selected":""}" data-hero="${h.id}">
+    <div class="portrait">${h.image?`<img loading="lazy" src="${escapeHTML(h.image)}" alt="${escapeHTML(h.name)}" onerror="this.parentElement.innerHTML='<span class=&quot;fallback&quot;>✦</span>'">`:'<span class="fallback">✦</span>'}</div>
+    <div class="hero-name">${escapeHTML(h.name)}</div><div class="hero-attr">${escapeHTML(state.game==="dota"?({str:"Сила",agi:"Ловкость",int:"Интеллект",all:"Универсальный"}[h.attr]||"Герой"): "DEADLOCK")}</div>
+  </button>`).join(""):'<div class="empty">Ничего не найдено. Попробуй изменить запрос.</div>';
 }
-
-function selectHero(h){
- selected=h;
- document.getElementById("selectedHero").innerHTML=
- `<img src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${h.slug}.png" alt="">
- <div><strong>${h.name}</strong><small style="display:block;color:#929db0">${attrNames[h.attr]}</small></div>`;
- renderHeroes();
- document.getElementById("buildResult").style.display="none";
+function chooseHero(id){
+  const hero=state.heroes.find(h=>String(h.id)===String(id)); if(!hero)return;
+  state.selected=hero; $("selectedBox").innerHTML=`${hero.image?`<img src="${escapeHTML(hero.image)}" alt="">`:""}<div><strong>${escapeHTML(hero.name)}</strong><div class="notice">${state.game==="dota"?"Dota 2":"Deadlock"} · ${escapeHTML(hero.attr==="str"?"Сила":hero.attr==="agi"?"Ловкость":hero.attr==="int"?"Интеллект":hero.attr)}</div></div>`;
+  $("itemSearch").disabled=false; $("itemSearch").value=""; state.itemQuery=""; state.itemFilter="Все";
+  renderHeroes(); renderItems(); $("buildResult").style.display="none";
 }
-
-search.addEventListener("input",renderHeroes);
-
-document.querySelectorAll(".filter").forEach(b=>{
- b.addEventListener("click",()=>{
- document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
- b.classList.add("active");
- filter=b.dataset.filter;
- renderHeroes();
- });
-});
-
-document.getElementById("dotaTab").addEventListener("click",()=>{
- document.getElementById("dotaApp").style.display="block";
- document.getElementById("deadlockApp").style.display="none";
- document.getElementById("dotaTab").classList.add("active");
- document.getElementById("deadlockTab").classList.remove("active");
-});
-
-document.getElementById("deadlockTab").addEventListener("click",()=>{
- document.getElementById("dotaApp").style.display="none";
- document.getElementById("deadlockApp").style.display="block";
- document.getElementById("deadlockTab").classList.add("active");
- document.getElementById("dotaTab").classList.remove("active");
-});
-
-// Предметы и ситуационные правила — это стартовая эвристика, не статистика меты.
-const itemDatabase={
- wand:{name:"Magic Wand",reason:"Восстанавливает здоровье и ману во время сражений."},
- treads:{name:"Power Treads",reason:"Даёт характеристики и скорость атаки."},
- phase:{name:"Phase Boots",reason:"Даёт броню и помогает перемещаться в бою."},
- tranquil:{name:"Tranquil Boots",reason:"Даёт восстановление здоровья и скорость передвижения."},
- arcane:{name:"Arcane Boots",reason:"Помогает поддерживать запас маны у себя и команды."},
- glimmer:{name:"Glimmer Cape",reason:"Помогает спасать себя и союзников, в том числе от магического урона."},
- force:{name:"Force Staff",reason:"Позволяет изменить позицию себя или союзника; полезен против некоторых ловушек и замедлений."},
- ghost:{name:"Ghost Scepter",reason:"Помогает пережить физические атаки, но требует осторожности против магического урона."},
- pipe:{name:"Pipe of Insight",reason:"Командная защита против значительного магического урона."},
- vessel:{name:"Spirit Vessel",reason:"Ситуативный ответ на сильное восстановление здоровья."},
- shiva:{name:"Shiva's Guard",reason:"Даёт броню и помогает против восстановления здоровья."},
- bkb:{name:"Black King Bar",reason:"Защищает от многих магических эффектов и контроля."},
- linkens:{name:"Linken's Sphere",reason:"Блокирует одно направленное заклинание; полезность зависит от конкретной способности."},
- lotus:{name:"Lotus Orb",reason:"Даёт броню, снимает некоторые эффекты и может отражать направленные заклинания."},
- aether:{name:"Aether Lens",reason:"Увеличивает дальность применения способностей."},
- blink:{name:"Blink Dagger",reason:"Помогает героям с сильной инициацией быстро начинать сражение."},
- butterfly:{name:"Butterfly",reason:"Усиливает физические атаки и даёт уклонение."},
- manta:{name:"Manta Style",reason:"Даёт возможность снять некоторые эффекты и создаёт иллюзии."}
-};
-
-const heroAliases={
- "pa":"phantom assassin",
- "am":"anti-mage",
- "anti mage":"anti-mage",
- "qop":"queen of pain",
- "np":"nature's prophet",
- "furion":"nature's prophet",
- "wr":"windranger",
- "od":"outworld destroyer",
- "dp":"death prophet",
- "aa":"ancient apparition",
- "kotl":"keeper of the light",
- "wk":"wraith king",
- "bara":"spirit breaker",
- " naix":"lifestealer",
- "potm":"mirana",
- "sk":"sand king",
- "ta":"templar assassin"
-};
-
-function normalizeDraft(raw){
- return raw.toLowerCase()
-  .replace(/[;|/]+/g,",")
-  .split(",")
-  .map(x=>x.trim())
-  .filter(Boolean)
-  .map(x=>heroAliases[x]||x);
+function renderItems(){
+  if(!state.selected){$("itemGrid").innerHTML='<div class="empty">После выбора героя здесь появятся предметы.</div>';return;}
+  const q=normalize(state.itemQuery);
+  const list=state.items.filter(i=>(state.itemFilter==="Все"||i.category===state.itemFilter)&&normalize(i.name).includes(q)).slice(0,100);
+  $("itemCount").textContent=`${list.length} предметов`;
+  const cats=["Все",...new Set(state.items.map(i=>i.category).filter(Boolean))].slice(0,9);
+  $("itemFilters").innerHTML=cats.map(c=>`<button class="filter ${state.itemFilter===c?"active":""}" data-item-filter="${escapeHTML(c)}">${escapeHTML(c)}</button>`).join("");
+  $("itemGrid").innerHTML=list.length?list.map(i=>`<div class="item-step">${i.image?`<img loading="lazy" src="${escapeHTML(i.image)}" alt="" onerror="this.style.visibility='hidden'">`:"<span class='step-num'>✦</span>"}<div><strong>${escapeHTML(i.name)}</strong><small>${escapeHTML(String(i.category||"Предмет"))}</small></div></div>`).join(""):'<div class="empty">Предметы не найдены или API не вернул список.</div>';
 }
-
-document.getElementById("buildBtn").addEventListener("click",()=>{
- const result=document.getElementById("buildResult");
- result.style.display="block";
-
- if(!selected){
-  result.innerHTML="<h3>Сначала выбери героя</h3>";
-  return;
- }
-
- const enemies=normalizeDraft(document.getElementById("enemies").value);
- const allies=normalizeDraft(document.getElementById("allies").value);
- const role=document.getElementById("heroRole").value;
- const hero=selected.name.toLowerCase();
-
- if(!enemies.length){
-  result.innerHTML="<h3>Укажи противников</h3><p>Введи имена героев через запятую, чтобы генератор мог оценить угрозы.</p>";
-  return;
- }
-
- const has=(list,...names)=>list.some(x=>names.includes(x));
- const recommendations=[];
- const add=(key,reason,group="Ситуативно")=>{
-  if(!itemDatabase[key]||recommendations.some(x=>x.key===key))return;
-  recommendations.push({key,name:itemDatabase[key].name,reason:reason||itemDatabase[key].reason,group});
- };
-
- // Базовые предметы по позиции
-if(role==="1"||role==="2"){
-  add("treads","Один из возможных вариантов обуви для кор-позиции.","Базовый ориентир");
-}
-
-if(role==="3"){
-  add("phase","Один из возможных вариантов обуви для оффлейнера.","Базовый ориентир");
-}
-
-if(role==="4"||role==="5"){
-  if(hero==="warlock"){
-    add("arcane","Warlock часто нуждается в мане для применения способностей.","Базовый ориентир");
+function showBuild(){
+  if(!state.selected){$("buildResult").style.display="block";$("buildResult").innerHTML="<strong>Сначала выбери героя.</strong>";return;}
+  const hero=state.selected.name, game=state.game;
+  const build=(sampleBuilds[game]||{})[hero];
+  const name=$("buildName").value.trim()||"Пример сборки";
+  const notes=$("buildNotes").value.trim();
+  let html=`<h3>${escapeHTML(name)} — ${escapeHTML(hero)}</h3><p>${escapeHTML(notes||"Базовый ориентир. Подстраивай покупку под матч, противников и текущий патч.")}</p>`;
+  if(build){
+    html+=build.map(([group,items])=>`<div class="result-card"><h4>${escapeHTML(group)}</h4><p>${escapeHTML(items)}</p></div>`).join("");
   }else{
-    add("tranquil","Один из возможных вариантов обуви для поддержки.","Базовый ориентир");
+    html+=`<div class="result-card"><h4>Сборка пока не добавлена</h4><p>Герой выбран, данные героя и предметы доступны выше. Добавь собственные этапы сборки в объект <code>sampleBuilds</code> в конце файла.</p></div>`;
   }
+  html+='<p class="notice">Важно: это демонстрационные шаблоны, а не автоматически рассчитанный оптимальный билд. Проверяй патч и ситуацию в матче.</p>';
+  $("buildResult").innerHTML=html;$("buildResult").style.display="block";
 }
-
-add("wand","Полезен в матчах, где рядом часто применяются способности.","Базовый ориентир");
-
-// Типы угроз определяются по введённым героям.
-const magic=has(enemies,"zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","techies","witch doctor","muerta");
-
-const heavyMagic=enemies.filter(x=>[
-  "zeus","lion","lina","pugna","skywrath mage","leshrac",
-  "jakiro","invoker","tinker","necrophos","venomancer",
-  "queen of pain","storm spirit","techies","witch doctor","muerta"
-].includes(x)).length>=2;
-
-const physical=has(enemies,"phantom assassin","juggernaut","sniper","drow ranger","ursa","sven","templar assassin","riki","monkey king","terrorblade","troll warlord","huskar","wraith king","faceless void");
-
-const sustain=has(enemies,"huskar","alchemist","morphling","necrophos","bristleback","troll warlord","omniknight","oracle","wraith king");
-
-const jump=has(enemies,"clockwerk","riki","slark","pudge","spirit breaker","night stalker","spectre","phantom assassin","storm spirit","queen of pain");
-
-const singleTarget=has(enemies,"doom","legion commander","bane","shadow shaman","lion","beastmaster","bloodseeker");
-
-const hardControl=has(enemies,"lion","shadow shaman","bane","disruptor","enigma","faceless void","magnus","tidehunter","puck");
-
-// Ответы для поддержки.
-if(role==="4"||role==="5"){
-  if(magic){
-    add("glimmer","Есть заметный магический урон: Glimmer может помочь спасти себя или союзника.");
-  }
-
-  if(jump){
-    add("force","В составе противника есть герои, которые могут добраться до поддержки или ограничить её перемещение.");
-  }
-
-  if(physical){
-    add("ghost","Есть опасные герои с физическими атаками, которые могут переключиться на поддержку.");
-  }
-
-  if(singleTarget){
-    add("lotus","Противник имеет опасные направленные способности; Lotus может помочь защитить себя или союзника.");
-  }
-
-  if(role==="5"&&heavyMagic){
-    add("glimmer","Несколько источников магического урона повышают ценность дополнительного средства спасения.");
-  }
-
-  if(hero==="warlock"){
-    add("aether","Дополнительная дальность помогает применять способности с более безопасной позиции.","Герой");
-  }
-}
-
- // Ответы для коров и оффлейнера.
- if(role==="1"||role==="2"||role==="3"){
-  if(magic||hardControl)add("bkb","Противник располагает магическим уроном или контролем, мешающим свободно драться.");
-  if(singleTarget)add("linkens","Рассмотри Linken's против ключевой направленной способности; проверь, можно ли её снять или обойти.");
-  if(role==="3"&&heavyMagic)add("pipe","Несколько источников магического урона делают командную защиту более ценной.");
-  if(role==="3"&&sustain)add("shiva","Полезный вариант против восстановления здоровья и для дополнительной брони.");
-  if((role==="1"||role==="2")&&physical)add("butterfly","Вариант для физического кор-героя, если уклонение и скорость атаки подходят его сборке.");
-  if((role==="1"||role==="2")&&has(enemies,"silencer","death prophet","drow ranger"))add("manta","Может снять некоторые эффекты; проверь, какие именно способности есть у противников.");
- }
-
- if(sustain)add("vessel","У противника есть герой с заметным восстановлением здоровья; Vessel стоит рассматривать, если его эффект действительно нужен вашей команде.");
-
- // Инициаторы: Blink только героям, которым он обычно нужен по роли/набору способностей.
- const initiators=["axe","magnus","tidehunter","enigma","earthshaker","centaur warrunner"," sand king","mars","tiny"];
- if(initiators.includes(hero)&&(role==="2"||role==="3"||role==="4"))add("blink","У выбранного героя есть сильная инициирующая способность, которую Blink помогает реализовать.","Герой");
-
- // Если нет подходящего триггера, не заполняем список случайными дорогими предметами.
- const roleNames={"1":"Carry · Position 1","2":"Mid · Position 2","3":"Offlane · Position 3","4":"Soft Support · Position 4","5":"Hard Support · Position 5"};
- const knownEnemies=enemies.join(", ");
- const knownAllies=allies.length?allies.join(", "):"Не указаны";
-
- result.innerHTML=`
-  <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
-  <p><b>Позиция:</b> ${roleNames[role]}</p>
-  <p><b>Союзники:</b> ${escapeHTML(knownAllies)}</p>
-  <p><b>Противники:</b> ${escapeHTML(knownEnemies)}</p>
-  <h3>РЕКОМЕНДАЦИИ</h3>
-  ${recommendations.length?recommendations.map((item,i)=>`
-   <div class="result-card item-card">
-    <img
-      class="item-icon"
-      src="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/${item.key}.png"
-      alt="${item.name}"
-      onerror="this.style.display='none'"
-    >
-    <div class="item-info">
-      <b>${i+1}. ${item.name}</b>
-      <small>${item.group}</small>
-      <p>${escapeHTML(item.reason)}</p>
-    </div>
-   </div>`).join(""):"<p>По введённому драфту пока не найдено уверенных ситуационных рекомендаций. Проверь написание имён героев или добавь больше противников.</p>"}
-<p class="notice">BUILDWISE prototype · Это логика по правилам, а не статистическая мета-сборка. Она не анализирует Match ID и пока не знает тайминги, экономику, способности в конкретной игре и актуальные цены/изменения патча.</p>
- `;
-});
-function escapeHTML(s){
- return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-renderHeroes();
+$("dotaTab").addEventListener("click",()=>setGame("dota"));
+$("deadlockTab").addEventListener("click",()=>setGame("deadlock"));
+$("heroSearch").addEventListener("input",e=>{state.heroQuery=e.target.value;renderHeroes();});
+$("heroFilters").addEventListener("click",e=>{const b=e.target.closest("[data-filter]");if(!b)return;state.heroFilter=b.dataset.filter;renderHeroes();});
+$("heroGrid").addEventListener("click",e=>{const b=e.target.closest("[data-hero]");if(b)chooseHero(b.dataset.hero);});
+$("itemSearch").addEventListener("input",e=>{state.itemQuery=e.target.value;renderItems();});
+$("itemFilters").addEventListener("click",e=>{const b=e.target.closest("[data-item-filter]");if(!b)return;state.itemFilter=b.dataset.itemFilter;renderItems();});
+$("showBuild").addEventListener("click",showBuild);
+$("resetBuild").addEventListener("click",()=>{state.selected=null;$("selectedBox").innerHTML='<span class="notice">Сначала выбери героя выше.</span>';$("buildResult").style.display="none";$("itemSearch").disabled=true;$("itemGrid").innerHTML='<div class="empty">После выбора героя здесь появятся предметы.</div>';$("itemCount").textContent="Выбери героя";renderHeroes();});
+setGame("dota");
+})();
 </script>
 </body>
 </html>
