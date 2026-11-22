@@ -309,14 +309,44 @@ document.getElementById("buildBtn").addEventListener("click", () => {
 
   const enemyText = document.getElementById("enemies").value.toLowerCase();
   const allyText = document.getElementById("allies").value.trim();
+  const role = document.getElementById("heroRole").value;
 
   let recommendations = [];
 
   const add = (key) => {
-    if (!recommendations.some(item => item.name === itemDatabase[key].name)) {
+    if (
+      itemDatabase[key] &&
+      !recommendations.some(item => item.name === itemDatabase[key].name)
+    ) {
       recommendations.push(itemDatabase[key]);
     }
   };
+
+  // Базовые предметы в зависимости от позиции
+  if (role === "1") {
+    add("bkb");
+    add("linkens");
+  }
+
+  if (role === "2") {
+    add("bkb");
+    add("linkens");
+  }
+
+  if (role === "3") {
+    add("pipe");
+    add("shiva");
+  }
+
+  if (role === "4") {
+    add("force");
+    add("glimmer");
+  }
+
+  if (role === "5") {
+    add("force");
+    add("glimmer");
+  }
 
   // Магический урон и контроль
   if (/lion|zeus|lina|pugna|skywrath|leshrac|jakiro/.test(enemyText)) {
@@ -342,12 +372,9 @@ document.getElementById("buildBtn").addEventListener("click", () => {
     add("bkb");
   }
 
-  // Общие предметы
-  add("blink");
-  add("force");
-
   result.innerHTML = `
     <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
+    <p><b>Позиция:</b> ${role}</p>
     <p><b>Союзники:</b> ${escapeHTML(allyText || "Не указаны")}</p>
     <p><b>Противники:</b> ${escapeHTML(enemyText || "Не указаны")}</p>
     <h3>RECOMMENDED ITEMS</h3>
@@ -358,8 +385,8 @@ document.getElementById("buildBtn").addEventListener("click", () => {
       </div>
     `).join("")}
     <p class="notice">
-      Это предварительные рекомендации по простым правилам.
-      Они не учитывают патч, роль, стадию игры и конкретную ситуацию матча.
+      Это первая версия подбора. Рекомендации учитывают позицию и угрозы противников,
+      но пока не учитывают актуальную статистику патча.
     </p>
   `;
 });
