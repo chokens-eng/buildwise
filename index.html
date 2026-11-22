@@ -7,7 +7,7 @@
 <style>
 :root{--bg:#090b10;--panel:#11151e;--line:#283142;--text:#edf1f8;--muted:#929db0;--accent:#c6a36b}
 *{box-sizing:border-box}
-body{margin:0;background:#090b10;color:var(--text);font:15px/1.5 Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Arial,sans-serif}
 header,main,footer{max-width:1180px;margin:auto;padding:24px}
 .logo{font-size:25px;font-weight:900;letter-spacing:4px}
 .logo span{color:var(--accent)}
@@ -19,7 +19,7 @@ header,main,footer{max-width:1180px;margin:auto;padding:24px}
 button{cursor:pointer}
 .tab,.filter{background:#11151e;color:var(--muted);border:1px solid var(--line);padding:10px 16px;border-radius:8px;font-weight:bold}
 .tab.active{background:var(--accent);color:#111}
-.section{background:#11151e;border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+.section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
 .section-head{display:flex;justify-content:space-between;margin-bottom:16px}
 .count,.notice{color:var(--muted);font-size:12px}
 .search{width:100%;padding:13px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white}
@@ -35,7 +35,7 @@ button{cursor:pointer}
 .hero-name{padding:9px 10px 2px;font-weight:bold}
 .hero-attr{padding:0 10px 10px;color:var(--muted);font-size:10px;text-transform:uppercase}
 .field label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
-.field input{width:100%;padding:12px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white}
+.field input,.field select{width:100%;padding:12px;background:#090c12;border:1px solid var(--line);border-radius:8px;color:white}
 .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .field.full{grid-column:1/-1}
 .selected-box{display:flex;align-items:center;gap:12px;background:#090c12;border:1px solid var(--line);padding:12px;border-radius:9px;min-height:65px}
@@ -43,6 +43,9 @@ button{cursor:pointer}
 .primary{background:var(--accent);border:0;color:#111;font-weight:bold;padding:13px 18px;border-radius:8px;margin-top:15px}
 .result{display:none;margin-top:16px;background:#090c12;border:1px solid var(--line);border-radius:9px;padding:16px}
 .result p{color:var(--muted)}
+.result-card{padding:12px;margin:9px 0;background:#171d29;border-radius:8px;border:1px solid #283142}
+.result-card small{display:block;color:var(--muted);margin-top:5px}
+.result h3{margin-top:18px}
 .empty,.deadlock{text-align:center;padding:35px;color:var(--muted)}
 footer{color:#667184;font-size:11px}
 @media(max-width:650px){.fieldgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h1{font-size:34px}}
@@ -80,7 +83,7 @@ footer{color:#667184;font-size:11px}
 <button class="filter" data-filter="uni">УНИВЕРСАЛЬНЫЕ</button>
 </div>
 <div class="grid" id="heroGrid"></div>
-<div class="notice">Поиск работает локально и не зависит от сервера OpenDota.</div>
+<div class="notice">Каталог героев загружается из встроенного списка.</div>
 </section>
 
 <section class="section">
@@ -90,17 +93,17 @@ footer{color:#667184;font-size:11px}
 <div class="selected-box" id="selectedHero">Выбери героя в каталоге выше</div>
 </div>
 <div class="fieldgrid">
-<div class="field">
- <div class="field full">
-  <label>YOUR ROLE / POSITION</label>
-  <select id="heroRole" style="width:100%;padding:12px;background:#090c12;border:1px solid #283142;border-radius:8px;color:white">
-    <option value="1">CARRY — POSITION 1</option>
-    <option value="2">MID — POSITION 2</option>
-    <option value="3">OFFLANE — POSITION 3</option>
-    <option value="4">SOFT SUPPORT — POSITION 4</option>
-    <option value="5">HARD SUPPORT — POSITION 5</option>
-  </select>
+<div class="field full">
+<label>YOUR ROLE / POSITION</label>
+<select id="heroRole">
+<option value="1">CARRY — POSITION 1</option>
+<option value="2">MID — POSITION 2</option>
+<option value="3">OFFLANE — POSITION 3</option>
+<option value="4">SOFT SUPPORT — POSITION 4</option>
+<option value="5" selected>HARD SUPPORT — POSITION 5</option>
+</select>
 </div>
+<div class="field">
 <label>YOUR TEAMMATES</label>
 <input id="allies" placeholder="Например: Pudge, Lion">
 </div>
@@ -109,7 +112,7 @@ footer{color:#667184;font-size:11px}
 <input id="enemies" placeholder="Например: PA, Axe">
 </div>
 <div class="field full">
-<label>MATCH ID (OPTIONAL)</label>
+<label>MATCH ID (OPTIONAL — ПОКА НЕ АНАЛИЗИРУЕТСЯ)</label>
 <input id="matchId" placeholder="Вставь Match ID">
 </div>
 </div>
@@ -152,7 +155,7 @@ const heroes=[
 ["Io","uni","wisp"],["Jakiro","int","jakiro"],
 ["Juggernaut","agi","juggernaut"],["Keeper of the Light","int","keeper_of_the_light"],
 ["Kez","agi","kez"],["Kunkka","str","kunkka"],
-["Largo","str","largo"],
+["Largo","uni","largo"],
 ["Legion Commander","str","legion_commander"],["Leshrac","int","leshrac"],
 ["Lich","int","lich"],["Lifestealer","str","life_stealer"],
 ["Lina","int","lina"],["Lion","int","lion"],
@@ -263,443 +266,151 @@ document.getElementById("deadlockTab").addEventListener("click",()=>{
  document.getElementById("dotaTab").classList.remove("active");
 });
 
-
-const itemDatabase = {
-  wand: {
-    name: "Magic Wand",
-    reason: "Восстанавливает здоровье и ману во время сражений."
-  },
-  treads: {
-    name: "Power Treads",
-    reason: "Даёт характеристики и скорость атаки."
-  },
-  phase: {
-    name: "Phase Boots",
-    reason: "Помогает перемещаться и преследовать противников."
-  },
-  tranquil: {
-    name: "Tranquil Boots",
-    reason: "Даёт восстановление здоровья и скорость передвижения."
-  },
-  arcane: {
-    name: "Arcane Boots",
-    reason: "Помогает поддерживать запас маны у себя и команды."
-  },
-  glimmer: {
-    name: "Glimmer Cape",
-    reason: "Помогает спасать себя и союзников от магического урона."
-  },
-  force: {
-    name: "Force Staff",
-    reason: "Позволяет менять позицию союзника или самого себя."
-  },
-  ghost: {
-    name: "Ghost Scepter",
-    reason: "Помогает переживать атаки героев с физическим уроном."
-  },
-  pipe: {
-    name: "Pipe of Insight",
-    reason: "Помогает команде переживать массовый магический урон."
-  },
-  vessel: {
-    name: "Spirit Vessel",
-    reason: "Снижает восстановление здоровья противника."
-  },
-  shiva: {
-    name: "Shiva's Guard",
-    reason: "Даёт броню и помогает против восстановления здоровья."
-  },
-  bkb: {
-    name: "Black King Bar",
-    reason: "Помогает переживать магические эффекты и контроль."
-  },
-  linkens: {
-    name: "Linken's Sphere",
-    reason: "Блокирует одно направленное заклинание."
-  },
-  lotus: {
-    name: "Lotus Orb",
-    reason: "Помогает снять некоторые отрицательные эффекты и отражать направленные заклинания."
-  },
-  aether: {
-    name: "Aether Lens",
-    reason: "Увеличивает дальность применения способностей."
-  },
-  blink: {
-    name: "Blink Dagger",
-    reason: "Помогает героям-инициаторам начинать сражения."
-  },
-  butterfly: {
-    name: "Butterfly",
-    reason: "Усиливает физические атаки и помогает против атакующих героев."
-  },
-  manta: {
-    name: "Manta Style",
-    reason: "Помогает снимать некоторые отрицательные эффекты и создавать иллюзии."
-  }
+// Предметы и ситуационные правила — это стартовая эвристика, не статистика меты.
+const itemDatabase={
+ wand:{name:"Magic Wand",reason:"Восстанавливает здоровье и ману во время сражений."},
+ treads:{name:"Power Treads",reason:"Даёт характеристики и скорость атаки."},
+ phase:{name:"Phase Boots",reason:"Даёт броню и помогает перемещаться в бою."},
+ tranquil:{name:"Tranquil Boots",reason:"Даёт восстановление здоровья и скорость передвижения."},
+ arcane:{name:"Arcane Boots",reason:"Помогает поддерживать запас маны у себя и команды."},
+ glimmer:{name:"Glimmer Cape",reason:"Помогает спасать себя и союзников, в том числе от магического урона."},
+ force:{name:"Force Staff",reason:"Позволяет изменить позицию себя или союзника; полезен против некоторых ловушек и замедлений."},
+ ghost:{name:"Ghost Scepter",reason:"Помогает пережить физические атаки, но требует осторожности против магического урона."},
+ pipe:{name:"Pipe of Insight",reason:"Командная защита против значительного магического урона."},
+ vessel:{name:"Spirit Vessel",reason:"Ситуативный ответ на сильное восстановление здоровья."},
+ shiva:{name:"Shiva's Guard",reason:"Даёт броню и помогает против восстановления здоровья."},
+ bkb:{name:"Black King Bar",reason:"Защищает от многих магических эффектов и контроля."},
+ linkens:{name:"Linken's Sphere",reason:"Блокирует одно направленное заклинание; полезность зависит от конкретной способности."},
+ lotus:{name:"Lotus Orb",reason:"Даёт броню, снимает некоторые эффекты и может отражать направленные заклинания."},
+ aether:{name:"Aether Lens",reason:"Увеличивает дальность применения способностей."},
+ blink:{name:"Blink Dagger",reason:"Помогает героям с сильной инициацией быстро начинать сражение."},
+ butterfly:{name:"Butterfly",reason:"Усиливает физические атаки и даёт уклонение."},
+ manta:{name:"Manta Style",reason:"Даёт возможность снять некоторые эффекты и создаёт иллюзии."}
 };
 
-document.getElementById("buildBtn").addEventListener("click", () => {
-  const result = document.getElementById("buildResult");
-  result.style.display = "block";
+const heroAliases={
+ "pa":"phantom assassin",
+ "am":"anti-mage",
+ "anti mage":"anti-mage",
+ "qop":"queen of pain",
+ "np":"nature's prophet",
+ "furion":"nature's prophet",
+ "wr":"windranger",
+ "od":"outworld destroyer",
+ "dp":"death prophet",
+ "aa":"ancient apparition",
+ "kotl":"keeper of the light",
+ "wk":"wraith king",
+ "bara":"spirit breaker",
+ " naix":"lifestealer",
+ "potm":"mirana",
+ "sk":"sand king",
+ "ta":"templar assassin"
+};
 
-  if (!selected) {
-    result.innerHTML = "<h3>Сначала выбери героя</h3>";
-    return;
+function normalizeDraft(raw){
+ return raw.toLowerCase()
+  .replace(/[;|/]+/g,",")
+  .split(",")
+  .map(x=>x.trim())
+  .filter(Boolean)
+  .map(x=>heroAliases[x]||x);
+}
+
+document.getElementById("buildBtn").addEventListener("click",()=>{
+ const result=document.getElementById("buildResult");
+ result.style.display="block";
+
+ if(!selected){
+  result.innerHTML="<h3>Сначала выбери героя</h3>";
+  return;
+ }
+
+ const enemies=normalizeDraft(document.getElementById("enemies").value);
+ const allies=normalizeDraft(document.getElementById("allies").value);
+ const role=document.getElementById("heroRole").value;
+ const hero=selected.name.toLowerCase();
+
+ if(!enemies.length){
+  result.innerHTML="<h3>Укажи противников</h3><p>Введи имена героев через запятую, чтобы генератор мог оценить угрозы.</p>";
+  return;
+ }
+
+ const has=(list,...names)=>list.some(x=>names.includes(x));
+ const recommendations=[];
+ const add=(key,reason,group="Ситуативно")=>{
+  if(!itemDatabase[key]||recommendations.some(x=>x.key===key))return;
+  recommendations.push({key,name:itemDatabase[key].name,reason:reason||itemDatabase[key].reason,group});
+ };
+
+ // Базовые предметы по позиции: только обувь и Wand как ориентиры,
+ // без автоматического добавления дорогих предметов.
+ if(role==="1"||role==="2")add("treads","Один из возможных вариантов обуви для кор-позиции.","Базовый ориентир");
+ if(role==="3")add("phase","Один из возможных вариантов обуви для оффлейнера.","Базовый ориентир");
+ if(role==="4"||role==="5")add("tranquil","Один из возможных вариантов обуви для поддержки; выбирай Arcane Boots, если команде особенно нужна мана.","Базовый ориентир");
+ add("wand","Полезен в матчах, где рядом часто применяются способности.","Базовый ориентир");
+
+ // Типы угроз определяются по введённым героям.
+ const magic=has(enemies,"zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","zeus","techies","witch doctor","muerta");
+ const heavyMagic= enemies.filter(x=>["zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","techies","witch doctor","muerta"].includes(x)).length>=2;
+ const physical=has(enemies,"phantom assassin","juggernaut","sniper","drow ranger","ursa","sven","templar assassin","riki","monkey king","terrorblade","troll warlord","huskar","wraith king","faceless void");
+ const sustain=has(enemies,"huskar","alchemist","morphling","necrophos","bristleback","troll warlord","omniknight","oracle","wraith king");
+ const jump=has(enemies,"clockwerk","riki","slark","pudge","spirit breaker","night stalker","spectre","phantom assassin","storm spirit","queen of pain");
+ const singleTarget=has(enemies,"doom","legion commander","bane","shadow shaman","lion","beastmaster","bloodseeker");
+ const hardControl=has(enemies,"lion","shadow shaman","bane","disruptor","enigma","faceless void","magnus","tidehunter","puck");
+
+ // Ответы для поддержки.
+ if(role==="4"||role==="5"){
+  if(magic)add("glimmer","Есть заметный магический урон: Glimmer может помочь спасти себя или союзника.");
+  if(jump)add("force","В составе противника есть герои, которые могут добраться до поддержки или ограничить её перемещение.");
+  if(physical)add("ghost","Есть опасные герои с физическими атаками, которые могут переключиться на поддержку.");
+  if(singleTarget)add("lotus","Противник имеет опасные направленные способности; Lotus может помочь защитить себя или союзника.");
+  if(role==="5"&&heavyMagic)add("glimmer","Несколько источников магического урона повышают ценность дополнительного средства спасения.");
+  if(hero==="warlock"){
+   add("arcane","Warlock часто нуждается в мане для применения способностей; сравни с Tranquil Boots по темпу игры.","Герой");
+   add("aether","Дополнительная дальность помогает применять способности с более безопасной позиции.","Герой");
   }
-
-  const enemyText = document
-    .getElementById("enemies").value.toLowerCase();
-
-  const allyText = document
-    .getElementById("allies").value.trim();
-
-  const role = document.getElementById("heroRole").value;
-  const hero = selected.name.toLowerCase();
-
-  const roleNames = {
-    "1": "Carry · Position 1",
-    "2": "Mid · Position 2",
-    "3": "Offlane · Position 3",
-    "4": "Soft Support · Position 4",
-    "5": "Hard Support · Position 5"
-  };
-
-  let recommendations = [];
-
-  const hasEnemy = (...names) =>
-    names.some(name => enemyText.includes(name));
-
-  const add = (key, reason) => {
-    const item = itemDatabase[key];
-
-    if (
-      item &&
-      !recommendations.some(existing => existing.name === item.name)
-    ) {
-      recommendations.push({
-        ...item,
-        reason: reason || item.reason
-      });
-    }
-  };
-
-  // =====================================
-  // 1. БАЗОВЫЕ ПРЕДМЕТЫ ПО ПОЗИЦИИ
-  // =====================================
-
-  if (role === "1" || role === "2") {
-    add("treads");
-    add("wand");
-  }
-
-  if (role === "3") {
-    add("phase");
-    add("wand");
-  }
-
-  if (role === "4" || role === "5") {
-    add("tranquil");
-    add("wand");
-  }
-
-  // Особенность Warlock на поддержке
-  if (hero === "warlock" && (role === "4" || role === "5")) {
-    recommendations = recommendations.filter(
-      item => item.name !== "Tranquil Boots"
-    );
-
-    add("arcane", "Восстанавливает ману для частого применения способностей.");
-    add("glimmer", "Помогает спасать союзников и переживать фокус противников.");
-  }
-
-  // =====================================
-  // 2. МАГИЧЕСКИЙ УРОН
-  // =====================================
-
-  const magicEnemies = [
-    "zeus", "lion", "lina", "pugna",
-    "skywrath", "leshrac", "jakiro",
-    "invoker", "tinker", "necrophos",
-    "venomancer", "queen of pain",
-    "zeus"
-  ];
-
-  const magicCount = magicEnemies.filter(
-    name => enemyText.includes(name)
-  ).length;
-
-  if (magicCount >= 1) {
-    if (role === "1" || role === "2" || role === "3") {
-      add("bkb", "Против магического урона и контроля вражеских героев.");
-    }
-
-    if (role === "4" || role === "5") {
-      add("glimmer", "Дополнительное спасение от магического урона.");
-    }
-  }
-
-  if (magicCount >= 2 && role === "3") {
-    add("pipe", "Против нескольких источников магического урона.");
-  }
-
-  // =====================================
-  // 3. ФИЗИЧЕСКИЙ УРОН
-  // =====================================
-
-  const physicalEnemies = [
-    "phantom assassin", "juggernaut",
-    "sniper", "drow ranger", "ursa",
-    "sven", "templar assassin",
-    "riki", "monkey king", "terrorblade"
-  ];
-
-  const physicalCount = physicalEnemies.filter(
-    name => enemyText.includes(name)
-  ).length;
-
-  if (physicalCount >= 1) {
-    if (role === "4" || role === "5") {
-      add("ghost", "Против опасных физических атак и героев, которые прыгают на поддержку.");
-    }
-
-    if (role === "3") {
-      add("shiva", "Дополнительная броня против физических атак.");
-    }
-
-    if (role === "1" || role === "2") {
-      add("butterfly", "Вариант усиления против физически ориентированной команды.");
-    }
-  }
-
-  // =====================================
-  // 4. ВОССТАНОВЛЕНИЕ ЗДОРОВЬЯ
-  // =====================================
-
-  if (hasEnemy(
-    "huskar", "alchemist", "morphling",
-    "necrophos", "bristleback", "troll warlord",
-    "omniknight", "oracle"
-  )) {
-    add("vessel", "Против сильного восстановления здоровья противников.");
-
-    if (role === "3") {
-      add("shiva", "Дополнительно снижает восстановление здоровья.");
-    }
-  }
-
-  // =====================================
-  // 5. НАПРАВЛЕННЫЕ СПОСОБНОСТИ
-  // =====================================
-
-  if (hasEnemy(
-    "doom", "legion commander",
-    "bane", "shadow shaman"
-  )) {
-    if (role === "1" || role === "2" || role === "3") {
-      add("linkens", "Против опасных направленных способностей.");
-    } else {
-      add("lotus", "Помогает защищать себя и союзников от направленных заклинаний.");
-    }
-  }
-
-  // =====================================
-  // 6. КОНТРОЛЬ И ВОЗМОЖНОСТЬ СПАСТИ СОЮЗНИКА
-  // =====================================
-
-  if (hasEnemy(
-    "clockwerk", "riki", "treant protector",
-    "slark", "pudge", "mars"
-  )) {
-    if (role === "4" || role === "5") {
-      add("force", "Полезен для изменения позиции в опасных ситуациях против этих героев.");
-    }
-  }
-
-  // =====================================
-  // 7. СИЛЬНЫЙ КОНТРОЛЬ ПРОТИВ КЕРРИ
-  // =====================================
-
-  if (hasEnemy(
-    "lion", "shadow shaman", "bane",
-    "disruptor", "enigma", "faceless void"
-  )) {
-    if (role === "1" || role === "2" || role === "3") {
-      add("bkb", "Против продолжительного контроля во время командных сражений.");
-    }
-  }
-
-  // =====================================
-  // 8. СПЕЦИАЛЬНЫЕ ПРЕДМЕТЫ ПО ГЕРОЯМ
-  // =====================================
-
-  const initiators = [
-    "axe", "magnus", "tidehunter",
-    "enigma", "earthshaker", "centaur warrunner"
-  ];
-
-  if (initiators.includes(hero)) {
-    add("blink", "Герою нужна возможность быстро начинать командные сражения.");
-  }
-
-  if (
-    hero === "warlock" ||
-    hero === "crystal maiden" ||
-    hero === "shadow shaman" ||
-    hero === "witch doctor"
-  ) {
-    if (role === "4" || role === "5") {
-      add("aether", "Увеличивает дальность применения важных способностей.");
-    }
-  }
-
-  if (hasEnemy("silencer", "death prophet", "drow ranger")) {
-    if (role === "1" || role === "2") {
-      add("manta", "Может помочь снять некоторые отрицательные эффекты.");
-    }
-  }
-
-  // =====================================
-  // 9. ОГРАНИЧЕНИЕ КОЛИЧЕСТВА
-  // =====================================
-
-  recommendations = recommendations.slice(0, 7);
-
-  // =====================================
-  // 10. РЕЗУЛЬТАТ
-  // =====================================
-
-  result.innerHTML = `
-    <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
-
-    <p><b>Позиция:</b> ${roleNames[role]}</p>
-
-    <p><b>Союзники:</b> ${escapeHTML(allyText || "Не указаны")}</p>
-
-    <p><b>Противники:</b> ${escapeHTML(enemyText || "Не указаны")}</p>
-
-    <h3>RECOMMENDED ITEMS</h3>
-
-    ${
-      recommendations.length
-        ? recommendations.map((item, index) => `
-          <div style="
-            padding:12px;
-            margin:9px 0;
-            background:#171d29;
-            border-radius:8px;
-            border:1px solid #283142;
-          ">
-            <b>${index + 1}. ${item.name}</b>
-            <p>${item.reason}</p>
-          </div>
-        `).join("")
-        : "<p>Недостаточно данных для рекомендаций. Укажи противников.</p>"
-    }
-
-    <p class="notice">
-      BUILDWISE 0.2 · Situational analysis.
-      Рекомендации основаны на правилах и требуют проверки в игре.
-    </p>
-  `;
-});
-
-
-document.getElementById("buildBtn").addEventListener("click", () => {
-  const result = document.getElementById("buildResult");
-  result.style.display = "block";
-
-  if (!selected) {
-    result.innerHTML = "<h3>Сначала выбери героя</h3>";
-    return;
-  }
-
-  const enemyText = document.getElementById("enemies").value.toLowerCase();
-  const allyText = document.getElementById("allies").value.trim();
-  const role = document.getElementById("heroRole").value;
-
-  let recommendations = [];
-
-  const add = (key) => {
-    if (
-      itemDatabase[key] &&
-      !recommendations.some(item => item.name === itemDatabase[key].name)
-    ) {
-      recommendations.push(itemDatabase[key]);
-    }
-  };
-
-  // Базовые предметы в зависимости от позиции
-  if (role === "1") {
-    add("bkb");
-    add("linkens");
-  }
-
-  if (role === "2") {
-    add("bkb");
-    add("linkens");
-  }
-
-  if (role === "3") {
-    add("pipe");
-    add("shiva");
-  }
-
-  if (role === "4") {
-    add("force");
-    add("glimmer");
-  }
-
-  if (role === "5") {
-    add("force");
-    add("glimmer");
-  }
-
-  // Магический урон и контроль
-  if (/lion|zeus|lina|pugna|skywrath|leshrac|jakiro/.test(enemyText)) {
-    add("bkb");
-    add("pipe");
-  }
-
-  // Лечение и восстановление здоровья
-  if (/huskar|alchemist|morphling|necrophos|bristleback/.test(enemyText)) {
-    add("vessel");
-    add("shiva");
-  }
-
-  // Сильные физические атаки
-  if (/phantom assassin|pa|juggernaut|sniper|drow|ursa/.test(enemyText)) {
-    add("ghost");
-    add("shiva");
-  }
-
-  // Опасные направленные способности
-  if (/doom|beastmaster|legion commander|bane|shadow shaman/.test(enemyText)) {
-    add("linkens");
-    add("bkb");
-  }
-
-  result.innerHTML = `
-    <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
-    <p><b>Позиция:</b> ${role}</p>
-    <p><b>Союзники:</b> ${escapeHTML(allyText || "Не указаны")}</p>
-    <p><b>Противники:</b> ${escapeHTML(enemyText || "Не указаны")}</p>
-    <h3>RECOMMENDED ITEMS</h3>
-    ${recommendations.map(item => `
-      <div style="padding:12px;margin:9px 0;background:#171d29;border-radius:8px">
-        <b>${item.name}</b>
-        <p>${item.reason}</p>
-      </div>
-    `).join("")}
-    <p class="notice">
-      Это первая версия подбора. Рекомендации учитывают позицию и угрозы противников,
-      но пока не учитывают актуальную статистику патча.
-    </p>
-  `;
+ }
+
+ // Ответы для коров и оффлейнера.
+ if(role==="1"||role==="2"||role==="3"){
+  if(magic||hardControl)add("bkb","Противник располагает магическим уроном или контролем, мешающим свободно драться.");
+  if(singleTarget)add("linkens","Рассмотри Linken's против ключевой направленной способности; проверь, можно ли её снять или обойти.");
+  if(role==="3"&&heavyMagic)add("pipe","Несколько источников магического урона делают командную защиту более ценной.");
+  if(role==="3"&&sustain)add("shiva","Полезный вариант против восстановления здоровья и для дополнительной брони.");
+  if((role==="1"||role==="2")&&physical)add("butterfly","Вариант для физического кор-героя, если уклонение и скорость атаки подходят его сборке.");
+  if((role==="1"||role==="2")&&has(enemies,"silencer","death prophet","drow ranger"))add("manta","Может снять некоторые эффекты; проверь, какие именно способности есть у противников.");
+ }
+
+ if(sustain)add("vessel","У противника есть герой с заметным восстановлением здоровья; Vessel стоит рассматривать, если его эффект действительно нужен вашей команде.");
+
+ // Инициаторы: Blink только героям, которым он обычно нужен по роли/набору способностей.
+ const initiators=["axe","magnus","tidehunter","enigma","earthshaker","centaur warrunner"," sand king","mars","tiny"];
+ if(initiators.includes(hero)&&(role==="2"||role==="3"||role==="4"))add("blink","У выбранного героя есть сильная инициирующая способность, которую Blink помогает реализовать.","Герой");
+
+ // Если нет подходящего триггера, не заполняем список случайными дорогими предметами.
+ const roleNames={"1":"Carry · Position 1","2":"Mid · Position 2","3":"Offlane · Position 3","4":"Soft Support · Position 4","5":"Hard Support · Position 5"};
+ const knownEnemies=enemies.join(", ");
+ const knownAllies=allies.length?allies.join(", "):"Не указаны";
+
+ result.innerHTML=`
+  <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
+  <p><b>Позиция:</b> ${roleNames[role]}</p>
+  <p><b>Союзники:</b> ${escapeHTML(knownAllies)}</p>
+  <p><b>Противники:</b> ${escapeHTML(knownEnemies)}</p>
+  <h3>РЕКОМЕНДАЦИИ</h3>
+  ${recommendations.length?recommendations.map((item,i)=>`
+   <div class="result-card">
+    <b>${i+1}. ${item.name}</b>
+    <small>${item.group}</small>
+    <p>${escapeHTML(item.reason)}</p>
+   </div>`).join(""):"<p>По введённому драфту пока не найдено уверенных ситуационных рекомендаций. Проверь написание имён героев или добавь больше противников.</p>"}
+  <p class="notice">BUILDWISE prototype · Это логика по правилам, а не статистическая мета-сборка. Она не анализирует Match ID и пока не знает тайминги, экономику, способности в конкретной игре и актуальные цены/изменения патча.</p>
+ `;
 });
 
 function escapeHTML(s){
- return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 renderHeroes();
 </script>
