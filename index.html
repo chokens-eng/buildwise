@@ -344,34 +344,70 @@ document.getElementById("buildBtn").addEventListener("click",()=>{
   recommendations.push({key,name:itemDatabase[key].name,reason:reason||itemDatabase[key].reason,group});
  };
 
- // Базовые предметы по позиции: только обувь и Wand как ориентиры,
- // без автоматического добавления дорогих предметов.
- if(role==="1"||role==="2")add("treads","Один из возможных вариантов обуви для кор-позиции.","Базовый ориентир");
- if(role==="3")add("phase","Один из возможных вариантов обуви для оффлейнера.","Базовый ориентир");
- if(role==="4"||role==="5")add("tranquil","Один из возможных вариантов обуви для поддержки; выбирай Arcane Boots, если команде особенно нужна мана.","Базовый ориентир");
- add("wand","Полезен в матчах, где рядом часто применяются способности.","Базовый ориентир");
+ // Базовые предметы по позиции
+if(role==="1"||role==="2"){
+  add("treads","Один из возможных вариантов обуви для кор-позиции.","Базовый ориентир");
+}
 
- // Типы угроз определяются по введённым героям.
- const magic=has(enemies,"zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","zeus","techies","witch doctor","muerta");
- const heavyMagic= enemies.filter(x=>["zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","techies","witch doctor","muerta"].includes(x)).length>=2;
- const physical=has(enemies,"phantom assassin","juggernaut","sniper","drow ranger","ursa","sven","templar assassin","riki","monkey king","terrorblade","troll warlord","huskar","wraith king","faceless void");
- const sustain=has(enemies,"huskar","alchemist","morphling","necrophos","bristleback","troll warlord","omniknight","oracle","wraith king");
- const jump=has(enemies,"clockwerk","riki","slark","pudge","spirit breaker","night stalker","spectre","phantom assassin","storm spirit","queen of pain");
- const singleTarget=has(enemies,"doom","legion commander","bane","shadow shaman","lion","beastmaster","bloodseeker");
- const hardControl=has(enemies,"lion","shadow shaman","bane","disruptor","enigma","faceless void","magnus","tidehunter","puck");
+if(role==="3"){
+  add("phase","Один из возможных вариантов обуви для оффлейнера.","Базовый ориентир");
+}
 
- // Ответы для поддержки.
- if(role==="4"||role==="5"){
-  if(magic)add("glimmer","Есть заметный магический урон: Glimmer может помочь спасти себя или союзника.");
-  if(jump)add("force","В составе противника есть герои, которые могут добраться до поддержки или ограничить её перемещение.");
-  if(physical)add("ghost","Есть опасные герои с физическими атаками, которые могут переключиться на поддержку.");
-  if(singleTarget)add("lotus","Противник имеет опасные направленные способности; Lotus может помочь защитить себя или союзника.");
-  if(role==="5"&&heavyMagic)add("glimmer","Несколько источников магического урона повышают ценность дополнительного средства спасения.");
+if(role==="4"||role==="5"){
   if(hero==="warlock"){
-   add("arcane","Warlock часто нуждается в мане для применения способностей; сравни с Tranquil Boots по темпу игры.","Герой");
-   add("aether","Дополнительная дальность помогает применять способности с более безопасной позиции.","Герой");
+    add("arcane","Warlock часто нуждается в мане для применения способностей.","Базовый ориентир");
+  }else{
+    add("tranquil","Один из возможных вариантов обуви для поддержки.","Базовый ориентир");
   }
- }
+}
+
+add("wand","Полезен в матчах, где рядом часто применяются способности.","Базовый ориентир");
+
+// Типы угроз определяются по введённым героям.
+const magic=has(enemies,"zeus","lion","lina","pugna","skywrath mage","leshrac","jakiro","invoker","tinker","necrophos","venomancer","queen of pain","storm spirit","techies","witch doctor","muerta");
+
+const heavyMagic=enemies.filter(x=>[
+  "zeus","lion","lina","pugna","skywrath mage","leshrac",
+  "jakiro","invoker","tinker","necrophos","venomancer",
+  "queen of pain","storm spirit","techies","witch doctor","muerta"
+].includes(x)).length>=2;
+
+const physical=has(enemies,"phantom assassin","juggernaut","sniper","drow ranger","ursa","sven","templar assassin","riki","monkey king","terrorblade","troll warlord","huskar","wraith king","faceless void");
+
+const sustain=has(enemies,"huskar","alchemist","morphling","necrophos","bristleback","troll warlord","omniknight","oracle","wraith king");
+
+const jump=has(enemies,"clockwerk","riki","slark","pudge","spirit breaker","night stalker","spectre","phantom assassin","storm spirit","queen of pain");
+
+const singleTarget=has(enemies,"doom","legion commander","bane","shadow shaman","lion","beastmaster","bloodseeker");
+
+const hardControl=has(enemies,"lion","shadow shaman","bane","disruptor","enigma","faceless void","magnus","tidehunter","puck");
+
+// Ответы для поддержки.
+if(role==="4"||role==="5"){
+  if(magic){
+    add("glimmer","Есть заметный магический урон: Glimmer может помочь спасти себя или союзника.");
+  }
+
+  if(jump){
+    add("force","В составе противника есть герои, которые могут добраться до поддержки или ограничить её перемещение.");
+  }
+
+  if(physical){
+    add("ghost","Есть опасные герои с физическими атаками, которые могут переключиться на поддержку.");
+  }
+
+  if(singleTarget){
+    add("lotus","Противник имеет опасные направленные способности; Lotus может помочь защитить себя или союзника.");
+  }
+
+  if(role==="5"&&heavyMagic){
+    add("glimmer","Несколько источников магического урона повышают ценность дополнительного средства спасения.");
+  }
+
+  if(hero==="warlock"){
+    add("aether","Дополнительная дальность помогает применять способности с более безопасной позиции.","Герой");
+  }
+}
 
  // Ответы для коров и оффлейнера.
  if(role==="1"||role==="2"||role==="3"){
