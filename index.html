@@ -253,19 +253,105 @@ document.getElementById("deadlockTab").addEventListener("click",()=>{
  document.getElementById("dotaTab").classList.remove("active");
 });
 
-document.getElementById("buildBtn").addEventListener("click",()=>{
- const result=document.getElementById("buildResult");
- result.style.display="block";
- if(!selected){
- result.innerHTML="<h3>Сначала выбери героя</h3>";
- return;
- }
- result.innerHTML=`<h3>DEMO BUILD · ${selected.name}</h3>
- <p>Союзники: ${escapeHTML(document.getElementById("allies").value||"не указаны")}</p>
- <p>Противники: ${escapeHTML(document.getElementById("enemies").value||"не указаны")}</p>
- <p>Старт: предметы на линию и восстановление ресурсов.</p>
- <p>Дальше: предметы на выживаемость и основной источник урона героя.</p>
- <p class="notice">Это демонстрационный шаблон. Настоящие рекомендации подключим отдельным этапом.</p>`;
+const itemDatabase = {
+  bkb: {
+    name: "Black King Bar",
+    reason: "Помогает защищаться от большинства направленных магических эффектов и контроля."
+  },
+  pipe: {
+    name: "Pipe of Insight",
+    reason: "Помогает команде переживать сильный магический урон."
+  },
+  shiva: {
+    name: "Shiva's Guard",
+    reason: "Даёт броню и помогает против героев, зависящих от восстановления здоровья."
+  },
+  vessel: {
+    name: "Spirit Vessel",
+    reason: "Снижает восстановление здоровья противника."
+  },
+  ghost: {
+    name: "Ghost Scepter",
+    reason: "Помогает пережить физические атаки."
+  },
+  blink: {
+    name: "Blink Dagger",
+    reason: "Помогает начинать сражения и быстро менять позицию."
+  },
+  force: {
+    name: "Force Staff",
+    reason: "Помогает спасать себя и союзников от опасных ситуаций."
+  },
+  linkens: {
+    name: "Linken's Sphere",
+    reason: "Блокирует одно направленное заклинание."
+  }
+};
+
+document.getElementById("buildBtn").addEventListener("click", () => {
+  const result = document.getElementById("buildResult");
+  result.style.display = "block";
+
+  if (!selected) {
+    result.innerHTML = "<h3>Сначала выбери героя</h3>";
+    return;
+  }
+
+  const enemyText = document.getElementById("enemies").value.toLowerCase();
+  const allyText = document.getElementById("allies").value.trim();
+
+  let recommendations = [];
+
+  const add = (key) => {
+    if (!recommendations.some(item => item.name === itemDatabase[key].name)) {
+      recommendations.push(itemDatabase[key]);
+    }
+  };
+
+  // Магический урон и контроль
+  if (/lion|zeus|lina|pugna|skywrath|leshrac|jakiro/.test(enemyText)) {
+    add("bkb");
+    add("pipe");
+  }
+
+  // Лечение и восстановление здоровья
+  if (/huskar|alchemist|morphling|necrophos|bristleback/.test(enemyText)) {
+    add("vessel");
+    add("shiva");
+  }
+
+  // Сильные физические атаки
+  if (/phantom assassin|pa|juggernaut|sniper|drow|ursa/.test(enemyText)) {
+    add("ghost");
+    add("shiva");
+  }
+
+  // Опасные направленные способности
+  if (/doom|beastmaster|legion commander|bane|shadow shaman/.test(enemyText)) {
+    add("linkens");
+    add("bkb");
+  }
+
+  // Общие предметы
+  add("blink");
+  add("force");
+
+  result.innerHTML = `
+    <h3>BUILDWISE ANALYSIS · ${selected.name}</h3>
+    <p><b>Союзники:</b> ${escapeHTML(allyText || "Не указаны")}</p>
+    <p><b>Противники:</b> ${escapeHTML(enemyText || "Не указаны")}</p>
+    <h3>RECOMMENDED ITEMS</h3>
+    ${recommendations.map(item => `
+      <div style="padding:12px;margin:9px 0;background:#171d29;border-radius:8px">
+        <b>${item.name}</b>
+        <p>${item.reason}</p>
+      </div>
+    `).join("")}
+    <p class="notice">
+      Это предварительные рекомендации по простым правилам.
+      Они не учитывают патч, роль, стадию игры и конкретную ситуацию матча.
+    </p>
+  `;
 });
 
 function escapeHTML(s){
