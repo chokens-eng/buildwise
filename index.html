@@ -4,215 +4,290 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUILDWISE — Game Assistant</title>
+<title>BUILDWISE — Dota 2 & Deadlock</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  --bg:#0b0b10;
-  --panel:#13131c;
-  --panel2:#191925;
-  --purple:#9875ef;
-  --text:#f4f1fb;
-  --muted:#858296;
-  --border:#292738;
+ --bg:#0b0b10;--panel:#13131c;--panel2:#1b1a27;
+ --purple:#9875ef;--text:#f4f1fb;--muted:#858296;
+ --border:#292738;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Inter,Arial,sans-serif;min-height:100vh;
-}
-header{
-  height:76px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 7%;background:#0d0d14;
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+header{height:76px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 7%;background:#0d0d14}
 .logo{font-size:23px;font-weight:900;letter-spacing:2px}
 .logo span{color:var(--purple)}
-.status{font-size:11px;color:#9c91b8;letter-spacing:1px}
-main{max-width:1150px;margin:auto;padding:65px 25px}
+.status{font-size:10px;color:#a99acb;letter-spacing:2px}
+main{max-width:1150px;margin:auto;padding:55px 25px}
 .eyebrow{color:var(--purple);font-size:11px;font-weight:800;letter-spacing:3px}
 h1{font-size:clamp(36px,6vw,65px);line-height:1.05;margin:15px 0}
 h1 span{color:var(--purple)}
-.subtitle{color:var(--muted);font-size:14px;line-height:1.8}
-.games{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:38px 0}
-.game{
-  border:1px solid var(--border);background:var(--panel);
-  border-radius:14px;padding:23px;text-align:left;color:white;
-  cursor:pointer;transition:.2s;
-}
-.game:hover,.game.active{border-color:var(--purple);background:#191526}
-.game h2{font-size:20px;margin:0 0 8px}
-.game p{color:var(--muted);font-size:12px;margin:0}
-.game .symbol{font-size:25px;margin-bottom:17px}
-.section{margin-top:38px}
-.section-title{font-size:16px;font-weight:800;margin-bottom:17px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.field{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:12px;padding:17px;
-}
-label{display:block;font-size:11px;color:var(--muted);margin-bottom:12px}
-input{
-  width:100%;background:var(--panel2);border:1px solid var(--border);
-  border-radius:8px;padding:13px;color:white;font:inherit;font-size:13px;
-  outline:none;
-}
+.subtitle{color:var(--muted);font-size:13px;line-height:1.8}
+.section{margin-top:40px}
+.section-title{font-size:15px;font-weight:800;margin-bottom:17px}
+.games{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px}
+.game{border:1px solid var(--border);background:var(--panel);border-radius:12px;padding:22px;text-align:left;color:white;cursor:pointer}
+.game.active,.game:hover{border-color:var(--purple);background:#191526}
+.game h2{font-size:19px;margin:12px 0 7px}
+.game p{font-size:11px;color:var(--muted);margin:0}
+.symbol{font-size:25px}
+.catalog{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px}
+.catalog-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.count{font-size:11px;color:var(--muted)}
+.search{width:100%;padding:14px;background:#0d0d14;border:1px solid var(--border);border-radius:9px;color:white;outline:none;font:inherit;font-size:13px;margin:18px 0}
+.search:focus{border-color:var(--purple)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:9px 13px;border-radius:7px;cursor:pointer;font-size:11px}
+.filter.active{background:#33264e;border-color:var(--purple);color:white}
+.hero-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.hero-card{background:#1a1925;border:1px solid var(--border);border-radius:9px;overflow:hidden;cursor:pointer;transition:.2s;min-width:0}
+.hero-card:hover{transform:translateY(-3px);border-color:var(--purple)}
+.hero-card.selected{border:2px solid var(--purple)}
+.hero-card img{width:100%;aspect-ratio:1.35;object-fit:cover;display:block;background:#292536}
+.hero-info{padding:10px}
+.hero-name{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-attr{font-size:9px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.message{padding:30px;text-align:center;color:var(--muted);font-size:12px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:16px}
+label{display:block;font-size:10px;color:var(--muted);margin-bottom:11px}
+input{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px;color:white;font:inherit;font-size:12px;outline:none}
 input:focus{border-color:var(--purple)}
-input::placeholder{color:#666275}
-.generate{
-  width:100%;padding:17px;margin-top:22px;border:0;border-radius:10px;
-  background:var(--purple);color:white;font-weight:800;
-  letter-spacing:1px;cursor:pointer;font-size:13px;transition:.2s;
-}
-.generate:hover{background:#ad91ff;transform:translateY(-2px)}
-.results{
-  display:none;margin-top:35px;background:var(--panel);
-  border:1px solid var(--border);border-radius:14px;padding:24px;
-}
-.results h2{font-size:20px}
+.generate{width:100%;padding:17px;margin-top:20px;border:0;border-radius:9px;background:var(--purple);color:white;font-weight:800;cursor:pointer;letter-spacing:1px}
+.results{display:none;margin-top:30px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:22px}
 .item-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.item{
-  background:var(--panel2);padding:17px;border-radius:10px;
-  border:1px solid var(--border);
-}
-.item strong{display:block;font-size:13px;margin-bottom:8px}
+.item{background:var(--panel2);padding:16px;border-radius:9px}
+.item strong{font-size:12px}
 .item p{font-size:11px;color:var(--muted);line-height:1.6}
-.note{color:var(--muted);font-size:11px;margin-top:20px}
-footer{
-  border-top:1px solid var(--border);padding:25px 7%;
-  color:var(--muted);font-size:11px;display:flex;
-  justify-content:space-between;gap:15px;
-}
-@media(max-width:650px){
-  header{padding:0 20px}
-  main{padding:40px 18px}
-  .games,.form-grid{grid-template-columns:1fr}
-  .item-list{grid-template-columns:1fr}
-  footer{flex-direction:column}
-}
+.note{font-size:10px;color:var(--muted);margin-top:20px}
+footer{border-top:1px solid var(--border);padding:25px 7%;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:12px}
+@media(max-width:800px){.hero-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){header{padding:0 18px}.status{font-size:8px}main{padding:35px 15px}.hero-grid{grid-template-columns:repeat(2,1fr)}.games,.field-grid,.item-list{grid-template-columns:1fr}footer{flex-direction:column}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="logo">BUILD<span>WISE</span></div>
-  <div class="status">GAME COMPANION / BETA</div>
+ <div class="logo">BUILD<span>WISE</span></div>
+ <div class="status">GAME COMPANION / BETA</div>
 </header>
 
 <main>
-  <div class="eyebrow">YOUR PERSONAL GAME ASSISTANT</div>
-  <h1>BUILD SMARTER.<br><span>PLAY BETTER.</span></h1>
-  <p class="subtitle">
-    Анализируй составы команд, подбирай предметы и создавай
-    сборки под каждую игровую ситуацию.
-  </p>
+ <div class="eyebrow">YOUR PERSONAL GAME ASSISTANT</div>
+ <h1>BUILD SMARTER.<br><span>PLAY BETTER.</span></h1>
+ <p class="subtitle">Анализируй составы команд, изучай героев и подбирай сборки под каждую игровую ситуацию.</p>
 
-  <div class="section">
-    <div class="section-title">01 / SELECT YOUR GAME</div>
-    <div class="games">
-      <button class="game active" onclick="setGame('Dota 2',this)">
-        <div class="symbol">⚔</div>
-        <h2>DOTA 2</h2>
-        <p>Heroes · Items · Counters · Builds</p>
-      </button>
-      <button class="game" onclick="setGame('Deadlock',this)">
-        <div class="symbol">◈</div>
-        <h2>DEADLOCK</h2>
-        <p>Heroes · Items · Matchups · Builds</p>
-      </button>
-    </div>
+ <section class="section">
+  <div class="section-title">01 / SELECT YOUR GAME</div>
+  <div class="games">
+   <button class="game active" onclick="setGame('Dota 2',this)">
+    <div class="symbol">⚔</div>
+    <h2>DOTA 2</h2>
+    <p>Heroes · Items · Counters · Builds</p>
+   </button>
+   <button class="game" onclick="setGame('Deadlock',this)">
+    <div class="symbol">◈</div>
+    <h2>DEADLOCK</h2>
+    <p>Heroes · Items · Matchups · Builds</p>
+   </button>
   </div>
+ </section>
 
-  <div class="section">
-    <div class="section-title">02 / YOUR MATCH</div>
-    <div class="form-grid">
-      <div class="field">
-        <label>YOUR HERO</label>
-        <input id="hero" placeholder="Например, Phantom Assassin">
-      </div>
-      <div class="field">
-        <label>YOUR TEAM</label>
-        <input id="allies" placeholder="Имена союзных героев">
-      </div>
-      <div class="field">
-        <label>ENEMY TEAM</label>
-        <input id="enemies" placeholder="Имена противников">
-      </div>
-      <div class="field">
-        <label>MATCH ID (OPTIONAL)</label>
-        <input id="match" placeholder="Вставь Match ID">
-      </div>
-    </div>
-    <button class="generate" onclick="generateBuild()">
-      ✦ GENERATE MY BUILD
-    </button>
+ <section class="section" id="catalogSection">
+  <div class="catalog">
+   <div class="catalog-top">
+    <div class="section-title">02 / HERO DATABASE</div>
+    <div class="count" id="heroCount">Загрузка героев...</div>
+   </div>
+   <p class="subtitle">Выбери своего персонажа. Нажми на карточку, чтобы добавить его в сборку.</p>
+   <input class="search" id="search" placeholder="⌕  Поиск героя..." oninput="renderHeroes()">
+   <div class="filters">
+    <button class="filter active" onclick="setFilter('all',this)">ALL</button>
+    <button class="filter" onclick="setFilter('str',this)">STRENGTH</button>
+    <button class="filter" onclick="setFilter('agi',this)">AGILITY</button>
+    <button class="filter" onclick="setFilter('int',this)">INTELLIGENCE</button>
+    <button class="filter" onclick="setFilter('all',this)">UNIVERSAL / ALL</button>
+   </div>
+   <div class="hero-grid" id="heroGrid">
+    <div class="message">Загружаем базу героев...</div>
+   </div>
   </div>
+ </section>
 
-  <div class="results" id="results">
-    <div class="eyebrow">BUILDWISE / ANALYSIS</div>
-    <h2 id="resultTitle">YOUR RECOMMENDED BUILD</h2>
-    <p id="resultDescription" class="subtitle"></p>
-    <div class="item-list" id="items"></div>
-    <p class="note">DEMO MODE — рекомендации пока демонстрационные.
-    Реальный анализ матчей и игровых данных появится в следующих версиях.</p>
+ <section class="section">
+  <div class="section-title">03 / YOUR MATCH</div>
+  <div class="field-grid">
+   <div class="field">
+    <label>YOUR HERO</label>
+    <input id="hero" placeholder="Выбери героя выше" readonly>
+   </div>
+   <div class="field">
+    <label>YOUR TEAM</label>
+    <input id="allies" placeholder="Имена союзных героев">
+   </div>
+   <div class="field">
+    <label>ENEMY TEAM</label>
+    <input id="enemies" placeholder="Имена противников">
+   </div>
+   <div class="field">
+    <label>MATCH ID (OPTIONAL)</label>
+    <input id="match" placeholder="Вставь Match ID">
+   </div>
   </div>
+  <button class="generate" onclick="generateBuild()">✦ GENERATE MY BUILD</button>
+ </section>
+
+ <div class="results" id="results">
+  <div class="eyebrow">BUILDWISE / ANALYSIS</div>
+  <h2 id="resultTitle"></h2>
+  <p id="resultDescription" class="subtitle"></p>
+  <div class="item-list" id="items"></div>
+  <p class="note">DEMO MODE — это демонстрационные категории, не реальные рекомендации предметов.</p>
+ </div>
 </main>
 
 <footer>
-  <span>BUILDWISE © 2026</span>
-  <span>DOTA 2 / DEADLOCK COMPANION</span>
-  <span>UNOFFICIAL FAN PROJECT</span>
+ <span>BUILDWISE © 2026</span>
+ <span>DOTA 2 / DEADLOCK COMPANION</span>
+ <span>UNOFFICIAL FAN PROJECT</span>
 </footer>
 
 <script>
-let currentGame = "Dota 2";
+let currentGame='Dota 2';
+let heroes=[];
+let filter='all';
+let selectedHero='';
+
+const api='https://api.opendota.com/api/heroStats';
+const imageBase='https://cdn.cloudflare.steamstatic.com';
+
+function safeText(value){
+ return String(value ?? '').replace(/[&<>"']/g,c=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+async function loadHeroes(){
+ const grid=document.getElementById('heroGrid');
+ try{
+  const response=await fetch(api);
+  if(!response.ok) throw new Error('API error');
+  heroes=await response.json();
+  document.getElementById('heroCount').textContent=heroes.length+' HEROES';
+  renderHeroes();
+ }catch(error){
+  grid.innerHTML='<div class="message">Не удалось загрузить героев. Проверь подключение и попробуй обновить страницу.</div>';
+  document.getElementById('heroCount').textContent='OFFLINE';
+ }
+}
+
+function renderHeroes(){
+ const grid=document.getElementById('heroGrid');
+ const query=document.getElementById('search').value.toLowerCase().trim();
+
+ const list=heroes.filter(h=>{
+  const matchesName=h.localized_name.toLowerCase().includes(query);
+  const matchesAttr=filter==='all'||h.primary_attr===filter;
+  return matchesName&&matchesAttr;
+ });
+
+ document.getElementById('heroCount').textContent=
+  list.length+' / '+heroes.length+' HEROES';
+
+ if(!list.length){
+  grid.innerHTML='<div class="message">Герои не найдены.</div>';
+  return;
+ }
+
+ grid.innerHTML=list.map(h=>{
+  const name=safeText(h.localized_name);
+  const attr=safeText(h.primary_attr);
+  const image=imageBase+h.img;
+  return `
+   <div class="hero-card ${selectedHero===h.localized_name?'selected':''}"
+    onclick="selectHero(${h.id})">
+    <img src="${safeText(image)}" alt="${name}" loading="lazy"
+     onerror="this.style.visibility='hidden'">
+    <div class="hero-info">
+     <div class="hero-name">${name}</div>
+     <div class="hero-attr">${attr}</div>
+    </div>
+   </div>`;
+ }).join('');
+}
+
+function selectHero(id){
+ const hero=heroes.find(h=>h.id===id);
+ if(!hero)return;
+ selectedHero=hero.localized_name;
+ document.getElementById('hero').value=selectedHero;
+ document.getElementById('results').style.display='none';
+ renderHeroes();
+}
+
+function setFilter(value,button){
+ filter=value;
+ document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+ renderHeroes();
+}
 
 function setGame(game,button){
-  currentGame = game;
-  document.querySelectorAll(".game").forEach(b=>b.classList.remove("active"));
-  button.classList.add("active");
-  document.getElementById("hero").placeholder =
-    game === "Dota 2" ? "Например, Phantom Assassin" : "Например, Abrams";
-  document.getElementById("results").style.display="none";
+ currentGame=game;
+ document.querySelectorAll('.game').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+
+ const catalog=document.getElementById('catalogSection');
+ if(game==='Deadlock'){
+  catalog.querySelector('.hero-grid').innerHTML=
+   '<div class="message">Каталог Deadlock появится в следующем обновлении BUILDWISE.</div>';
+  document.getElementById('heroCount').textContent='COMING SOON';
+  document.getElementById('hero').readOnly=false;
+  document.getElementById('hero').value='';
+  document.getElementById('hero').placeholder='Введи имя персонажа Deadlock';
+ }else{
+  document.getElementById('hero').readOnly=true;
+  document.getElementById('hero').value='';
+  document.getElementById('hero').placeholder='Выбери героя выше';
+  renderHeroes();
+ }
+ document.getElementById('results').style.display='none';
 }
 
 function generateBuild(){
-  const hero = document.getElementById("hero").value.trim();
-  const allies = document.getElementById("allies").value.trim();
-  const enemies = document.getElementById("enemies").value.trim();
+ const hero=document.getElementById('hero').value.trim();
+ const allies=document.getElementById('allies').value.trim();
+ const enemies=document.getElementById('enemies').value.trim();
 
-  if(!hero){
-    alert("Сначала укажи своего персонажа!");
-    return;
-  }
+ if(!hero){alert('Сначала выбери персонажа!');return;}
 
-  const builds = currentGame === "Dota 2" ? [
-    ["STARTING ITEMS","Стартовые предметы для начала матча."],
-    ["CORE ITEMS","Основные предметы для развития персонажа."],
-    ["SITUATIONAL ITEMS","Предметы, которые стоит рассматривать в зависимости от противников."]
-  ] : [
-    ["EARLY GAME","Предметы для начальной стадии игры."],
-    ["MID GAME","Предметы для усиления в середине матча."],
-    ["LATE GAME","Варианты развития на поздней стадии."]
-  ];
+ const stages=currentGame==='Dota 2'?[
+  ['STARTING ITEMS','Стартовые предметы для начала матча.'],
+  ['CORE ITEMS','Основные предметы для развития персонажа.'],
+  ['SITUATIONAL ITEMS','Варианты подбора в зависимости от противников.']
+ ]:[
+  ['EARLY GAME','Предметы начальной стадии.'],
+  ['MID GAME','Предметы середины матча.'],
+  ['LATE GAME','Варианты развития на поздней стадии.']
+ ];
 
-  document.getElementById("resultTitle").textContent =
-    hero.toUpperCase() + " / " + currentGame.toUpperCase();
+ document.getElementById('resultTitle').textContent=
+  hero.toUpperCase()+' / '+currentGame.toUpperCase();
+ document.getElementById('resultDescription').textContent=
+  'Герой: '+hero+
+  (allies?' · Союзники: '+allies:'')+
+  (enemies?' · Противники: '+enemies:'')+
+  '. Это предварительный демонстрационный экран.';
+ document.getElementById('items').innerHTML=stages.map(s=>
+  `<div class="item"><strong>${s[0]}</strong><p>${s[1]}</p></div>`
+ ).join('');
 
-  document.getElementById("resultDescription").textContent =
-    "Персонаж: "+hero+
-    (allies ? " · Союзники: "+allies : "")+
-    (enemies ? " · Противники: "+enemies : "")+
-    ". Ниже представлены демонстрационные категории сборки.";
-
-  document.getElementById("items").innerHTML = builds.map(b=>
-    `<div class="item"><strong>${b[0]}</strong><p>${b[1]}</p></div>`
-  ).join("");
-
-  document.getElementById("results").style.display="block";
-  document.getElementById("results").scrollIntoView({behavior:"smooth"});
+ const result=document.getElementById('results');
+ result.style.display='block';
+ result.scrollIntoView({behavior:'smooth'});
 }
+
+loadHeroes();
 </script>
 </body>
 </html>
